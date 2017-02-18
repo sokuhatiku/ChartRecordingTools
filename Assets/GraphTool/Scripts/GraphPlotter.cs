@@ -8,10 +8,7 @@ using System.Linq;
 namespace GraphTool
 {
 
-	public class GraphPlotter : MaskableGraphic,
-		//ISerializationCallbackReceiver,
-		ILayoutElement,
-		ICanvasRaycastFilter
+	public class GraphPlotter : GraphPartsBase
 	{
 		[Header("Plot Option")]
 		public bool drawDot = true;
@@ -19,11 +16,10 @@ namespace GraphTool
 		public float dotFloating = 0f;
 		public bool drawLine = true;
 		public float lineRadius = 0.25f;
+		[Range(1, 1000)]
 		public int capacity = 100;
 
 
-		protected Rect graphScope = new Rect(0f,50f, 100f, 100f);
-		protected Vector2 graphScale = Vector2.one;
 		protected List<Vector2> points = new List<Vector2>();
 
 		protected override void Awake()
@@ -36,12 +32,6 @@ namespace GraphTool
 		private void Update()
 		{
 			UpdateGeometry();
-		}
-
-		public void UpdateScope(Rect newScope)
-		{
-			graphScope = newScope;
-			RecalculateScale();
 		}
 
 		public void AddPoint(Vector2 point)
@@ -57,25 +47,24 @@ namespace GraphTool
 			DrawGraph(vh);
 		}
 
-		void RecalculateScale()
-		{
-			graphScale = new Vector2(rectTransform.rect.width / graphScope.width, rectTransform.rect.height / graphScope.height);
-		}
-
 		void DrawGraph(VertexHelper vh)
 		{
 			if (points == null) return;
 			vh.Clear();
 			Vector2 prevPoint = Vector2.zero;
 			var rect = rectTransform.rect;
+			bool skipTrigger = false;
 			for (int i=0; i< points.Count; ++i)
 			{
-				var point = new Vector2((points[i].x - graphScope.xMin) * graphScale.x + rect.width/2 ,
-					(points[i].y - graphScope.yMin) * graphScale.y);
-				if (rect.Contains(point) || rect.Contains(prevPoint))
+				var point = TransformPoint(points[i]);
+				if ((point.x < rect.xMin && prevPoint.x < rect.xMin) ||
+					(point.x > rect.xMax && prevPoint.x > rect.xMax))
+					if (skipTrigger) break; else continue;
+				else
 				{
 					if (drawDot) AddDot(vh, point);
-					if (drawLine && i > 0 ) AddLine(vh, prevPoint, point);
+					if (drawLine && i > 0) AddLine(vh, prevPoint, point);
+					skipTrigger = true;
 				}
 				prevPoint = point;
 			}
@@ -108,25 +97,6 @@ namespace GraphTool
 			var vertId = vh.currentVertCount - 1;
 			vh.AddTriangle(vertId - 3, vertId - 2, vertId-1);
 			vh.AddTriangle(vertId - 1, vertId, vertId - 3);
-		}
-
-		public void CalculateLayoutInputHorizontal() { }
-		public void CalculateLayoutInputVertical() { }
-
-		public float minWidth { get { return 0; } }
-		public float preferredWidth { get { return 0; } }
-		public float flexibleWidth { get { return -1; } }
-
-		public float minHeight { get { return 0; } }
-		public float preferredHeight { get { return 0; } }
-		public float flexibleHeight { get { return -1; } }
-
-		public int layoutPriority { get { return 0; } }
-		
-
-		public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
-		{
-			return false;
 		}
 	}
 

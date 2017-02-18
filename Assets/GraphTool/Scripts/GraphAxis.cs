@@ -7,43 +7,47 @@ using UnityEngine.UI;
 namespace GraphTool
 {
 
-	public class GraphAxis : MaskableGraphic,
-		ILayoutElement,
-		ICanvasRaycastFilter
+	public class GraphAxis : GraphPartsBase
 	{
 
-		Rect scope;
+		public Vector2 GridSize;
 
-		public void OnUpdateScope(Rect newScope)
+		protected override void Awake()
 		{
-			this.scope = newScope;
+			base.Awake();
+			var handler = GetComponentInParent<GraphHandler>();
+			if (handler != null) handler.RegisterAxis(this);
+		}
+
+		private void Update()
+		{
 			UpdateGeometry();
 		}
 
+
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
-			
-		}
 
+			var gridcountX = Mathf.FloorToInt(graphScope.width / GridSize.x);
+			var gridcountY = Mathf.FloorToInt(graphScope.height / GridSize.y);
 
-		public void CalculateLayoutInputHorizontal() { }
-		public void CalculateLayoutInputVertical() { }
+			var offset = new Vector2(graphScope.x % GridSize.x, graphScope.y % GridSize.y);
 
-		public float minWidth { get { return 0; } }
-		public float preferredWidth { get { return 0; } }
-		public float flexibleWidth { get { return -1; } }
+			vh.Clear();
+			{
+				var center = new Vector2(rectTransform.rect.center.x, scopeMatrix.m13);
+				if (rectTransform.rect.Contains(center))
+				{
+					vh.AddVert(new Vector3(rectTransform.rect.xMin, center.y - 1, 0f), color, Vector2.zero);
+					vh.AddVert(new Vector3(rectTransform.rect.xMin, center.y + 1, 0f), color, Vector2.zero);
+					vh.AddVert(new Vector3(rectTransform.rect.xMax, center.y + 1, 0f), color, Vector2.zero);
+					vh.AddVert(new Vector3(rectTransform.rect.xMax, center.y - 1, 0f), color, Vector2.zero);
 
-		public float minHeight { get { return 0; } }
-		public float preferredHeight { get { return 0; } }
-		public float flexibleHeight { get { return -1; } }
-
-		public int layoutPriority { get { return 0; } }
-
-
-		public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
-		{
-			return false;
+					var vertId = vh.currentVertCount - 1;
+					vh.AddTriangle(vertId - 3, vertId - 2, vertId - 1);
+					vh.AddTriangle(vertId - 1, vertId, vertId - 3);
+				}
+			}
 		}
 	}
-
 }
