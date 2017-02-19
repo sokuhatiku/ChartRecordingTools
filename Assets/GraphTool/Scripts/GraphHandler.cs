@@ -2,43 +2,68 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GraphTool
 {
-
+	[ExecuteInEditMode]
 	public class GraphHandler : MonoBehaviour
 	{
+		const float limit = 0.01f;
+		[SerializeField]protected Vector2 graphOffset = new Vector2(0, 0);
+		[SerializeField]protected Vector2 graphScope = new Vector2(5f, 200f);
 
-		public GraphPlotter plotter;
-		public GraphAxis axis;
-		[SerializeField] Rect Scope = new Rect(0, 0, 100f, 200f);
+		private Rect ScopeRect;
 
-
-		public void RegisterPlotter(GraphPlotter plotter)
+		public Rect GetScope()
 		{
-			this.plotter = plotter;
+			return ScopeRect;
 		}
 
-		public GraphPlotter GetPlotter()
+		private void Start()
 		{
-			return plotter;
-		}
-
-		internal void RegisterAxis(GraphAxis axis)
-		{
-			this.axis = axis;
+			UpdateGraph();
 		}
 
 		private void FixedUpdate()
 		{
-			if (plotter != null)
-			{
-				Scope.x = Time.time;
-				plotter.UpdateScope(Scope);
-				axis.UpdateScope(Scope);
-			}
+#if UNITY_EDITOR
+			if (!UnityEditor.EditorApplication.isPlaying)
+				return;
+#endif
+			graphOffset.x = Time.time;
+			UpdateGraph();
 		}
 
+#if UNITY_EDITOR
+		private void OnValidate()
+		{
+			graphScope = new Vector2(
+				graphScope.x < limit ? limit : graphScope.x,
+				graphScope.y < limit ? limit : graphScope.y);
+			UpdateGraph();
+		}
+#endif
+
+		void UpdateGraph()
+		{
+			
+			ScopeRect = new Rect(graphOffset, graphScope);
+			ScopeRect.x -= graphScope.x;
+			ScopeRect.y -= (graphScope.y / 2);
+			
+			if(OnUpdateGraph != null)
+				OnUpdateGraph();
+		}
+
+		public void AddValue(int key, float value)
+		{
+			if (OnAddValue != null)
+				OnAddValue(key, new Vector2(Time.time, value));
+		}
+
+		public Action OnUpdateGraph;
+		public Action<int, Vector2> OnAddValue;
 	}
 
 }

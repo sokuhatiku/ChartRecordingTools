@@ -1,0 +1,84 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+namespace GraphTool
+{
+
+	public class GraphGrid : GraphPartsBase
+	{
+		const float limit = 1f / 60f;
+
+		public Vector2 GridSpacing = new Vector2(1f,10f);
+		public float GridRadius = 1f;
+
+		[Space]
+		public int xSubdivision = 1;
+		public int ySubdivision = 10;
+		public float subGridRadius = 0.5f;
+		public Color subGridColor = new Color(1,1,1,0.5f);
+
+
+		protected override void OnValidate()
+		{
+			GridSpacing = new Vector2(
+				GridSpacing.x < limit ? limit : GridSpacing.x,
+				GridSpacing.y < limit ? limit : GridSpacing.y);
+			xSubdivision = Mathf.Max(xSubdivision, 1);
+			ySubdivision = Mathf.Max(ySubdivision, 1);
+			UpdateGraph();
+		}
+
+		protected override void OnPopulateMesh(VertexHelper vh)
+		{
+			if (handler == null) return;
+			RecalculateScale();
+
+			vh.Clear();
+			if (GridRadius <= 0) return;
+
+			var scope = handler.GetScope();
+			var margin = GridRadius;
+			scope.xMin -= margin;
+			scope.xMax += margin;
+			scope.yMin -= margin;
+			scope.yMax += margin;
+
+			bool SkipTrigger = false;
+			float xOffset = scope.xMin - (scope.xMin % GridSpacing.x);
+			var xSpacing = GridSpacing.x / xSubdivision;
+			for (int i= scope.x < 0 ? -xSubdivision : 0 ; ; ++i)
+			{
+				var x = xOffset + xSpacing * i;
+				if (!scope.Contains(new Vector2(x, scope.center.y)))
+					if (!SkipTrigger) continue; else break;
+				else SkipTrigger = true;
+
+				var from = TransformPoint(new Vector3(x, scope.yMin));
+				var to = TransformPoint(new Vector3(x, scope.yMax));
+
+				var isMain = i % xSubdivision == 0;
+				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
+			}
+
+			SkipTrigger = false;
+			float yOffset = scope.yMin - (scope.yMin % GridSpacing.y);
+			var ySpacing = GridSpacing.y / ySubdivision;
+			for (int i = scope.y < 0 ? -ySubdivision : 0 ; ; ++i)
+			{
+				var y = yOffset + ySpacing * i;
+				if (!scope.Contains(new Vector2(scope.center.x, y)))
+					if (!SkipTrigger) continue; else break;
+				else SkipTrigger = true;
+
+				var from = TransformPoint(new Vector3(scope.xMin, y));
+				var to = TransformPoint(new Vector3(scope.xMax, y));
+
+				var isMain = i % ySubdivision == 0;
+				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
+			}
+		}
+	}
+}

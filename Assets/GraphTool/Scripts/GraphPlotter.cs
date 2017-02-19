@@ -19,42 +19,40 @@ namespace GraphTool
 		[Range(1, 1000)]
 		public int capacity = 100;
 
-
 		protected List<Vector2> points = new List<Vector2>();
 
-		protected override void Awake()
+		protected override void OnEnable()
 		{
-			base.Awake();
-			var handler = GetComponentInParent<GraphHandler>();
-			if (handler != null) handler.RegisterPlotter(this);
+			base.OnEnable();
+			if (handler != null)
+				handler.OnAddValue += AddValue;
 		}
 
-		private void Update()
+		protected override void OnDisable()
 		{
-			UpdateGeometry();
+			base.OnDisable();
+			if (handler != null)
+				handler.OnAddValue -= AddValue;
 		}
 
-		public void AddPoint(Vector2 point)
+		void AddValue(int key, Vector2 value)
 		{
 			while (points.Count >= capacity)
 				points.RemoveAt(capacity - 1);
-			points.Insert(0, point);
+			points.Insert(0, value);
 		}
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
-			RecalculateScale();
-			DrawGraph(vh);
-		}
+			if (handler == null || points == null) return;
 
-		void DrawGraph(VertexHelper vh)
-		{
-			if (points == null) return;
+			RecalculateScale();
+
 			vh.Clear();
 			Vector2 prevPoint = Vector2.zero;
 			var rect = rectTransform.rect;
 			bool skipTrigger = false;
-			for (int i=0; i< points.Count; ++i)
+			for (int i = 0; i < points.Count; ++i)
 			{
 				var point = TransformPoint(points[i]);
 				if ((point.x < rect.xMin && prevPoint.x < rect.xMin) ||
@@ -62,41 +60,12 @@ namespace GraphTool
 					if (skipTrigger) break; else continue;
 				else
 				{
-					if (drawDot) AddDot(vh, point);
-					if (drawLine && i > 0) AddLine(vh, prevPoint, point);
+					if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
+					if (drawLine && i > 0) AddLine(vh, prevPoint, point, lineRadius);
 					skipTrigger = true;
 				}
 				prevPoint = point;
 			}
-		}
-
-		protected virtual void AddDot(VertexHelper vh, Vector2 pt)
-		{
-			vh.AddVert(new Vector3(pt.x, pt.y - dotRadius, -dotFloating), color, Vector2.zero);
-			vh.AddVert(new Vector3(pt.x - dotRadius, pt.y, -dotFloating), color, Vector2.zero);
-			vh.AddVert(new Vector3(pt.x, pt.y + dotRadius, -dotFloating), color, Vector2.zero);
-			vh.AddVert(new Vector3(pt.x + dotRadius, pt.y, -dotFloating), color, Vector2.zero);
-
-			var vertId = vh.currentVertCount-1;
-			vh.AddTriangle(vertId-3, vertId-2, vertId-1);
-			vh.AddTriangle(vertId-1, vertId  , vertId-3);
-
-		}
-
-		protected virtual void AddLine(VertexHelper vh, Vector2 from, Vector2 to)
-		{
-			var dir = (to - from).normalized;
-			var lSide = new Vector2(-dir.y,dir.x) * lineRadius;
-			var rSide = new Vector2(dir.y,-dir.x) * lineRadius;
-
-			vh.AddVert(from + lSide, color, Vector2.zero);
-			vh.AddVert(from + rSide, color, Vector2.zero);
-			vh.AddVert(to + rSide, color, Vector2.zero);
-			vh.AddVert(to + lSide, color, Vector2.zero);
-			
-			var vertId = vh.currentVertCount - 1;
-			vh.AddTriangle(vertId - 3, vertId - 2, vertId-1);
-			vh.AddTriangle(vertId - 1, vertId, vertId - 3);
 		}
 	}
 

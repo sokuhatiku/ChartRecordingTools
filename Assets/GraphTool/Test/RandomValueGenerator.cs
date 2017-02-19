@@ -9,6 +9,7 @@ namespace GraphTool.Test
 	public class RandomValueGenerator : MonoBehaviour
 	{
 		//public string plotterName;
+		public int key;
 		public float interval = 1f;
 
 		[Space]
@@ -24,7 +25,6 @@ namespace GraphTool.Test
 		
 
 		GraphHandler handler;
-		GraphPlotter plotter;
 
 		private void OnValidate()
 		{
@@ -34,15 +34,15 @@ namespace GraphTool.Test
 				Ct_Min = Ct_Max;
 		}
 
-		private void Start()
+		private void OnEnable()
 		{
 			handler = GetComponent<GraphHandler>();
-			plotter = handler.GetPlotter();
+			StartCoroutine(generateRandomValue());
+		}
 
-			if(plotter != null)
-			{
-				StartCoroutine(generateRandomValue());
-			}
+		private void OnDisable()
+		{
+			StopAllCoroutines();
 		}
 
 		float value;
@@ -60,7 +60,7 @@ namespace GraphTool.Test
 				else newValue = (Max + Min) / 2;
 				if (Continuity) value = Mathf.Clamp(value + newValue, Min, Max);
 				else value = newValue;
-				plotter.AddPoint(new Vector2(Time.time, value));
+				handler.AddValue(key, value);
 				yield return new WaitForSeconds(interval);
 			}
 		}
