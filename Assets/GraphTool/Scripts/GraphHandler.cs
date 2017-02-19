@@ -13,7 +13,17 @@ namespace GraphTool
 		[SerializeField]protected Vector2 graphOffset = new Vector2(0, 0);
 		[SerializeField]protected Vector2 graphScope = new Vector2(5f, 200f);
 
+		public enum UpdateType
+		{
+			EveryFrame,
+			ValueUpdate,
+			None,
+		}
+		public UpdateType updateType = UpdateType.EveryFrame;
+
 		private Rect ScopeRect;
+		Dictionary<string, int> keyList;
+
 
 		public Rect GetScope()
 		{
@@ -27,13 +37,16 @@ namespace GraphTool
 		}
 #endif
 
-		private void FixedUpdate()
+		private void Update()
 		{
 #if UNITY_EDITOR
 			if (!UnityEditor.EditorApplication.isPlaying) return;
 #endif
-			graphOffset.x = Time.time;
-			UpdateGraph();
+			if (updateType == UpdateType.EveryFrame)
+			{
+				graphOffset.x = Time.time;
+				UpdateGraph();
+			}
 		}
 
 #if UNITY_EDITOR
@@ -60,6 +73,12 @@ namespace GraphTool
 		{
 			if (OnAddValue != null)
 				OnAddValue(key, new Vector2(Time.time, value));
+			if (updateType == UpdateType.ValueUpdate)
+			{
+				graphOffset.x = Time.time;
+				UpdateGraph();
+			}
+
 		}
 
 		public Action OnUpdateGraph;
