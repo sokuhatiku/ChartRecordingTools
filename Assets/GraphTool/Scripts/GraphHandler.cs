@@ -22,12 +22,23 @@ namespace GraphTool
 		public UpdateType updateType = UpdateType.EveryFrame;
 
 		private Rect ScopeRect;
-		Dictionary<string, int> keyList;
-
+		Dictionary<string, int> keyList = new Dictionary<string, int>();
 
 		public Rect GetScope()
 		{
 			return ScopeRect;
+		}
+
+		public int GetKey(string keyword)
+		{
+			if (keyList.ContainsKey(keyword))
+				return keyList[keyword];
+			else
+			{
+				var key = keyList.Count + 1;
+				keyList.Add(keyword, key);
+				return key;
+			}
 		}
 
 #if UNITY_EDITOR

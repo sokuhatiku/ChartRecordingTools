@@ -32,8 +32,7 @@ namespace GraphTool
 
 		protected void UpdateGraph()
 		{
-			SetAllDirty();
-			//UpdateGeometry();
+			SetVerticesDirty();
 		}
 
 		protected virtual void RecalculateScale()

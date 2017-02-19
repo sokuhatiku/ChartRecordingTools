@@ -10,6 +10,8 @@ namespace GraphTool
 
 	public class GraphPlotter : GraphPartsBase
 	{
+		[Header("Plotter")]
+		public string keyword;
 		[Header("Plot Option")]
 		public bool drawDot = true;
 		public float dotRadius = 1f;
@@ -19,13 +21,17 @@ namespace GraphTool
 		[Range(1, 1000)]
 		public int capacity = 100;
 
+		protected int key;
 		protected List<Vector2> points = new List<Vector2>();
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 			if (handler != null)
+			{
+				key = handler.GetKey(keyword);
 				handler.OnAddValue += AddValue;
+			}
 		}
 
 		protected override void OnDisable()
@@ -37,6 +43,7 @@ namespace GraphTool
 
 		void AddValue(int key, Vector2 value)
 		{
+			if (key != this.key) return;
 			while (points.Count >= capacity)
 				points.RemoveAt(capacity - 1);
 			points.Insert(0, value);

@@ -8,8 +8,7 @@ namespace GraphTool.Test
 	[RequireComponent(typeof(GraphHandler))]
 	public class RandomValueGenerator : MonoBehaviour
 	{
-		//public string plotterName;
-		public int key;
+		public string keyword;
 		public float interval = 1f;
 
 		[Space]
@@ -23,8 +22,8 @@ namespace GraphTool.Test
 		public float Ct_Max = 100f;
 		public float Ct_Min = -100f;
 		
-
 		GraphHandler graph;
+		int key;
 
 #if UNITY_EDITOR
 		private void OnValidate()
@@ -40,6 +39,7 @@ namespace GraphTool.Test
 		{
 			graph = GetComponent<GraphHandler>();
 			StartCoroutine(generateRandomValue());
+			key = graph.GetKey(keyword);
 		}
 
 		private void OnDisable()
