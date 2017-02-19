@@ -20,22 +20,22 @@ namespace GraphTool
 			return ScopeRect;
 		}
 
+#if UNITY_EDITOR
 		private void Start()
 		{
 			UpdateGraph();
 		}
+#endif
 
 		private void FixedUpdate()
 		{
 #if UNITY_EDITOR
-			if (!UnityEditor.EditorApplication.isPlaying)
-				return;
+			if (!UnityEditor.EditorApplication.isPlaying) return;
 #endif
 			graphOffset.x = Time.time;
 			UpdateGraph();
 		}
 
-#if UNITY_EDITOR
 		private void OnValidate()
 		{
 			graphScope = new Vector2(
@@ -43,11 +43,9 @@ namespace GraphTool
 				graphScope.y < limit ? limit : graphScope.y);
 			UpdateGraph();
 		}
-#endif
 
 		void UpdateGraph()
 		{
-			
 			ScopeRect = new Rect(graphOffset, graphScope);
 			ScopeRect.x -= graphScope.x;
 			ScopeRect.y -= (graphScope.y / 2);

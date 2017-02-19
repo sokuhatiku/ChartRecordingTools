@@ -150,7 +150,7 @@ MonoBehaviour:
   xSubdivision: 10
   ySubdivision: 10
   subGridRadius: 0.5
-  subGridColor: {r: 1, g: 1, b: 1, a: 0.19607843}
+  subGridColor: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!222 &313146683
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -327,7 +327,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &654218357
 RectTransform:
   m_ObjectHideFlags: 0
@@ -585,7 +585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.50344825, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

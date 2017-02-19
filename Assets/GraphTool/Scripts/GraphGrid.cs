@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 
@@ -39,17 +40,20 @@ namespace GraphTool
 			vh.Clear();
 			if (GridRadius <= 0) return;
 
+			var xSpacing = GridSpacing.x / xSubdivision;
+			var ySpacing = GridSpacing.y / ySubdivision;
 			var scope = handler.GetScope();
-			var margin = GridRadius;
-			scope.xMin -= margin;
-			scope.xMax += margin;
-			scope.yMin -= margin;
-			scope.yMax += margin;
+			scope.xMin -= xSpacing;
+			scope.xMax += xSpacing;
+			scope.yMin -= ySpacing;
+			scope.yMax += ySpacing;
+
 
 			bool SkipTrigger = false;
 			float xOffset = scope.xMin - (scope.xMin % GridSpacing.x);
-			var xSpacing = GridSpacing.x / xSubdivision;
-			for (int i= scope.x < 0 ? -xSubdivision : 0 ; ; ++i)
+			int xCount = Mathf.CeilToInt(scope.width / GridSpacing.x) * xSubdivision;
+			if (scope.x >= 0) xCount += xSubdivision;
+			for (int i= scope.x < 0 ? -xSubdivision : 0 ; i < xCount ; ++i)
 			{
 				var x = xOffset + xSpacing * i;
 				if (!scope.Contains(new Vector2(x, scope.center.y)))
@@ -65,8 +69,9 @@ namespace GraphTool
 
 			SkipTrigger = false;
 			float yOffset = scope.yMin - (scope.yMin % GridSpacing.y);
-			var ySpacing = GridSpacing.y / ySubdivision;
-			for (int i = scope.y < 0 ? -ySubdivision : 0 ; ; ++i)
+			int yCount = Mathf.CeilToInt(scope.height / GridSpacing.y) * ySubdivision;
+			if (scope.y >= 0) yCount += ySubdivision;
+			for (int i = scope.y < 0 ? -ySubdivision : 0 ; i < yCount ; ++i)
 			{
 				var y = yOffset + ySpacing * i;
 				if (!scope.Contains(new Vector2(scope.center.x, y)))
@@ -79,6 +84,7 @@ namespace GraphTool
 				var isMain = i % ySubdivision == 0;
 				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
 			}
+
 		}
 	}
 }

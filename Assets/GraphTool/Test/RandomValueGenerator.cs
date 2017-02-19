@@ -24,7 +24,7 @@ namespace GraphTool.Test
 		public float Ct_Min = -100f;
 		
 
-		GraphHandler handler;
+		GraphHandler graph;
 
 		private void OnValidate()
 		{
@@ -36,7 +36,7 @@ namespace GraphTool.Test
 
 		private void OnEnable()
 		{
-			handler = GetComponent<GraphHandler>();
+			graph = GetComponent<GraphHandler>();
 			StartCoroutine(generateRandomValue());
 		}
 
@@ -60,7 +60,7 @@ namespace GraphTool.Test
 				else newValue = (Max + Min) / 2;
 				if (Continuity) value = Mathf.Clamp(value + newValue, Min, Max);
 				else value = newValue;
-				handler.AddValue(key, value);
+				graph.AddValue(key, value);
 				yield return new WaitForSeconds(interval);
 			}
 		}
