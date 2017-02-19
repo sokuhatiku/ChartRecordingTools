@@ -36,6 +36,7 @@ namespace GraphTool
 			UpdateGraph();
 		}
 
+#if UNITY_EDITOR
 		private void OnValidate()
 		{
 			graphScope = new Vector2(
@@ -43,6 +44,7 @@ namespace GraphTool
 				graphScope.y < limit ? limit : graphScope.y);
 			UpdateGraph();
 		}
+#endif
 
 		void UpdateGraph()
 		{

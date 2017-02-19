@@ -22,6 +22,7 @@ namespace GraphTool
 		public Color subGridColor = new Color(1,1,1,0.5f);
 
 
+#if UNITY_EDITOR
 		protected override void OnValidate()
 		{
 			GridSpacing = new Vector2(
@@ -31,6 +32,7 @@ namespace GraphTool
 			ySubdivision = Mathf.Max(ySubdivision, 1);
 			UpdateGraph();
 		}
+#endif
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{

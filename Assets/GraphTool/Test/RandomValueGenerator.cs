@@ -26,6 +26,7 @@ namespace GraphTool.Test
 
 		GraphHandler graph;
 
+#if UNITY_EDITOR
 		private void OnValidate()
 		{
 			if(Max < Min)
@@ -33,6 +34,7 @@ namespace GraphTool.Test
 			if (Ct_Max < Ct_Min)
 				Ct_Min = Ct_Max;
 		}
+#endif
 
 		private void OnEnable()
 		{
