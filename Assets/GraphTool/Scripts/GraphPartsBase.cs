@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/**
+Graph Tool
+
+Copyright (c) 2017 Sokuhatiku
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
+
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace GraphTool
 {
-	[ExecuteInEditMode]
+
 	public abstract class GraphPartsBase : MaskableGraphic,
 		ILayoutElement,
 		ICanvasRaycastFilter
@@ -30,7 +37,7 @@ namespace GraphTool
 				handler.OnUpdateGraph -= UpdateGraph;
 		}
 
-		protected void UpdateGraph()
+		protected virtual void UpdateGraph()
 		{
 			SetVerticesDirty();
 		}

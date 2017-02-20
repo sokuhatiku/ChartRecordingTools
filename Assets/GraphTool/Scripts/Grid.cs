@@ -1,14 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/**
+Graph Tool
+
+Copyright (c) 2017 Sokuhatiku
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
+
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 
 namespace GraphTool
 {
 
-	public class GraphGrid : GraphPartsBase
+	[ExecuteInEditMode]
+	public class Grid : GraphPartsBase
 	{
 		const float limit = 1f / 60f;
 

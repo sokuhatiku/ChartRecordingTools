@@ -1,5 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/**
+Graph Tool
+
+Copyright (c) 2017 Sokuhatiku
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
+
+using System.Collections;
 using UnityEngine;
 
 namespace GraphTool.Test
@@ -8,7 +16,8 @@ namespace GraphTool.Test
 	[RequireComponent(typeof(GraphHandler))]
 	public class RandomValueGenerator : MonoBehaviour
 	{
-		public string keyword;
+		GraphHandler graph;
+		public int dataKey = -1;
 		public float interval = 1f;
 
 		[Space]
@@ -21,9 +30,7 @@ namespace GraphTool.Test
 		public bool Continuity = false;
 		public float Ct_Max = 100f;
 		public float Ct_Min = -100f;
-		
-		GraphHandler graph;
-		int key;
+
 
 #if UNITY_EDITOR
 		private void OnValidate()
@@ -37,9 +44,13 @@ namespace GraphTool.Test
 
 		private void OnEnable()
 		{
+			if (dataKey == -1)
+			{
+				enabled = false;
+				return;
+			}
 			graph = GetComponent<GraphHandler>();
 			StartCoroutine(generateRandomValue());
-			key = graph.GetKey(keyword);
 		}
 
 		private void OnDisable()
@@ -62,7 +73,7 @@ namespace GraphTool.Test
 				else newValue = (Max + Min) / 2;
 				if (Continuity) value = Mathf.Clamp(value + newValue, Min, Max);
 				else value = newValue;
-				graph.AddValue(key, value);
+				graph.SetCurrentData(dataKey, value);
 				yield return new WaitForSeconds(interval);
 			}
 		}

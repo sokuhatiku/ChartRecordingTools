@@ -1,0 +1,33 @@
+@startuml
+
+title classdata
+
+class GraphHandler{
+  -Dictionary<keyword, key> keyList
+  -List<data> datalist
+  +Action OnUpdateGraph
+  +void GetKey(keyword)
+  +value GetData(key)
+  +void SetData(key, value)
+  +scope GetScope()
+}
+
+class GraphPartsBase <<abstract>>
+class PlotterBase <<abstract>>
+class Plotter
+class Grid
+class Data{
+  +bool interpolation
+  +bool isTimeBase
+  +value GetData()
+  +void SetData(value)
+}
+
+GraphPartsBase <|.. Grid
+GraphPartsBase <|.. PlotterBase
+PlotterBase <|.. Plotter
+GraphPartsBase .> GraphHandler
+PlotterBase ..> GraphHandler
+GraphHandler o- Data
+
+@enduml
