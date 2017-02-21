@@ -145,6 +145,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  handler: {fileID: 1622823462}
   GridSpacing: {x: 1, y: 100}
   GridRadius: 1
   xSubdivision: 10
@@ -519,13 +520,13 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  handler: {fileID: 1622823462}
   dataKey: 2
   drawDot: 0
   dotRadius: 4
   dotFloating: 0
   drawLine: 1
   lineRadius: 1
-  capacity: 1000
 --- !u!222 &858602076
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -660,13 +661,13 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  handler: {fileID: 1622823462}
   dataKey: 1
   drawDot: 1
   dotRadius: 4
   dotFloating: 0
   drawLine: 1
   lineRadius: 1
-  capacity: 1000
 --- !u!222 &1155832746
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -951,10 +952,10 @@ MonoBehaviour:
   _scopeMargin: {x: 0, y: 10}
   _scopeUnsigned: 0
   _updateTiming: 0
-  dataList: []
-  timestampKey: 0
-  editorOnlyDataKeyword:
-  - _Timestamp
+  dataList:
+  - name: Timestamp
+  - name: RandomValue1
+  - name: RandomValue2
 --- !u!114 &1622823463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,6 +967,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84857d0a917267c41bb1e88ad68bb641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graph: {fileID: 1622823462}
   dataKey: 1
   interval: 0.1
   Max: 100
@@ -985,6 +987,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84857d0a917267c41bb1e88ad68bb641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graph: {fileID: 1622823462}
   dataKey: 2
   interval: 0.1
   Max: 100

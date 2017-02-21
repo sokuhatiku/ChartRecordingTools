@@ -15,8 +15,14 @@ namespace GraphTool
 	[System.Serializable]
 	public class Data
 	{
+		public string name;
 		protected List<float?> data = new List<float?>();
 		protected float? currentData;
+
+		public Data(string displayName)
+		{
+			name = displayName;
+		}
 
 		public virtual float? GetCurrent()
 		{
@@ -30,6 +36,7 @@ namespace GraphTool
 
 		public virtual void Determine()
 		{
+			if(data == null) data = new List<float?>();
 			data.Insert(0, currentData);
 			currentData = null;
 		}

@@ -17,10 +17,16 @@ namespace GraphTool
 		ILayoutElement,
 		ICanvasRaycastFilter
 	{
-		protected GraphHandler handler;
+		[SerializeField, HideInInspector]protected GraphHandler handler;
 		protected Vector2 transration;
 		protected Vector2 scale;
 		protected Vector2 offset;
+
+		protected override void Reset()
+		{
+			base.Reset();
+			handler = GetComponentInParent<GraphHandler>();
+		}
 
 		protected override void OnEnable()
 		{

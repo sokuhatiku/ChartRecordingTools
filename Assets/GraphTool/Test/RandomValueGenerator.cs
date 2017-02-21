@@ -16,7 +16,8 @@ namespace GraphTool.Test
 	[RequireComponent(typeof(GraphHandler))]
 	public class RandomValueGenerator : MonoBehaviour
 	{
-		GraphHandler graph;
+		[SerializeField, HideInInspector]GraphHandler graph;
+		[GraphDataKey("graph")]
 		public int dataKey = -1;
 		public float interval = 1f;
 
@@ -33,6 +34,12 @@ namespace GraphTool.Test
 
 
 #if UNITY_EDITOR
+
+		private void Reset()
+		{
+			graph = GetComponent<GraphHandler>();
+		}
+
 		private void OnValidate()
 		{
 			if(Max < Min)
@@ -44,12 +51,11 @@ namespace GraphTool.Test
 
 		private void OnEnable()
 		{
-			if (dataKey == -1)
+			if (dataKey == -1 || graph == null)
 			{
 				enabled = false;
 				return;
 			}
-			graph = GetComponent<GraphHandler>();
 			StartCoroutine(generateRandomValue());
 		}
 

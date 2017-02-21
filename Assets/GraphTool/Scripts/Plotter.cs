@@ -15,7 +15,7 @@ namespace GraphTool
 
 	public class Plotter : GraphPartsBase
 	{
-		[Header("Plotter")]
+		[Header("Plotter"), GraphDataKey("handler")]
 		public int dataKey = -1;
 
 		[Header("Plot Option")]
@@ -24,8 +24,6 @@ namespace GraphTool
 		public float dotFloating = 0f;
 		public bool drawLine = true;
 		public float lineRadius = 0.25f;
-		[Range(1, 1000)]
-		public int capacity = 100;
 
 
 		protected override void OnPopulateMesh(VertexHelper vh)
@@ -40,7 +38,7 @@ namespace GraphTool
 			if (handler == null || dataKey == -1) return;
 
 			var data = handler.GetDataEnumerator(dataKey);
-			var time = handler.GetDataEnumerator(handler.getTimestampKey());
+			var time = handler.GetDataEnumerator(GraphHandler.SYSKEY_TIMESTAMP);
 
 			RecalculateScale();
 
