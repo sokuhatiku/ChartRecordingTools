@@ -55,7 +55,7 @@ namespace GraphTool
 
 
 
-	public class DataListEditWindow : EditorWindow, IHasCustomMenu
+	public class DataListEditWindow : EditorWindow
 	{
 		SerializedObject handler;
 		SerializedProperty self;
@@ -74,14 +74,12 @@ namespace GraphTool
 			window.position = new Rect(GUIUtility.GUIToScreenPoint(buttonRect.position), window.position.size);
 			window.Focus();
 
-
 		}
 
 		private void Update()
 		{
-			if (focusedWindow != this && !locked)
+			if (focusedWindow != this)
 			{
-				
 				Close();
 			}
 		}
@@ -101,41 +99,29 @@ namespace GraphTool
 		{
 			if (handler == null || handler.targetObject == null)
 				return;
-			scroll = EditorGUILayout.BeginScrollView(scroll,GUI.skin.box);
 			handler.Update();
-			EditorGUILayout.LabelField("DataKey Selector", EditorStyles.boldLabel);
-			EditorGUI.BeginDisabledGroup(true);
-			EditorGUILayout.ObjectField(new GUIContent("target"), handler.targetObject, typeof(UnityEngine.Object), true);
-			EditorGUILayout.ObjectField(new GUIContent("self"), self.serializedObject.targetObject, typeof(UnityEngine.Object), true);
-			EditorGUI.EndDisabledGroup();
-			dataList.DoLayoutList();
 
-			var height = Mathf.Min(dataList.count * dataList.elementHeight + 120f, 500f);
-			minSize = new Vector2(400f, height);
-			maxSize = new Vector2(400f, height);
+			scroll = EditorGUILayout.BeginScrollView(scroll, GUI.skin.box);
+			{
+				EditorGUILayout.LabelField("DataKey Editor", EditorStyles.boldLabel);
+				EditorGUI.BeginDisabledGroup(true);
+				EditorGUILayout.ObjectField(new GUIContent("graph"), handler.targetObject, typeof(UnityEngine.Object), true);
+				EditorGUILayout.ObjectField(new GUIContent("self"), self.serializedObject.targetObject, typeof(UnityEngine.Object), true);
+				EditorGUI.EndDisabledGroup();
+
+				dataList.DoLayoutList();
+
+				var height = Mathf.Min(dataList.count * dataList.elementHeight + 120f, 500f);
+				minSize = new Vector2(400f, height);
+				maxSize = new Vector2(400f, height);
+			}
+			EditorGUILayout.EndScrollView();
+			
 			handler.ApplyModifiedProperties();
 
-			EditorGUILayout.EndScrollView();
 			
 		}
 
-
-		//be helped by https://leahayes.wordpress.com/2013/04/30/adding-the-little-padlock-button-to-your-editorwindow/
-		GUIStyle lockButtonStyle;
-		bool locked = false;
-		void ShowButton(Rect position)
-		{
-			if (lockButtonStyle == null)
-				lockButtonStyle = "IN LockButton";
-			locked = GUI.Toggle(position, locked, GUIContent.none, lockButtonStyle);
-		}
-
-		public void AddItemsToMenu(GenericMenu menu)
-		{
-			menu.AddItem(new GUIContent("Lock"), locked, () => {
-				locked = !locked;
-			});
-		}
 	}
 
 }
