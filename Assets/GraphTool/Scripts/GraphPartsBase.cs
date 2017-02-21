@@ -22,11 +22,13 @@ namespace GraphTool
 		protected Vector2 scale;
 		protected Vector2 offset;
 
+#if UNITY_EDITOR
 		protected override void Reset()
 		{
 			base.Reset();
 			handler = GetComponentInParent<GraphHandler>();
 		}
+#endif
 
 		protected override void OnEnable()
 		{
