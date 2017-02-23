@@ -65,6 +65,9 @@ namespace GraphTool
 
 	public class DataListEditWindow : EditorWindow
 	{
+		const float WINDOW_WIDTH = 400f;
+		const float WINDOW_MAX_HEIGHT = 500f;
+
 		SerializedObject handler;
 		SerializedProperty self;
 		ReorderableList dataList;
@@ -79,7 +82,7 @@ namespace GraphTool
 			window.dataList = GraphHandlerEditor.CreateDataList(handler);
 			window.dataList.index = self.intValue;
 			window.ShowPopup();
-			window.position = new Rect(GUIUtility.GUIToScreenPoint(buttonRect.position), window.position.size);
+			window.position = new Rect(GUIUtility.GUIToScreenPoint(new Vector2(buttonRect.xMax - WINDOW_WIDTH, buttonRect.yMax)), window.position.size);
 			window.Focus();
 
 		}
@@ -92,14 +95,14 @@ namespace GraphTool
 			}
 		}
 
-		private void OnDestroy()
-		{
-			if (self != null && dataList != null)
-			{
-				self.intValue = dataList.index;
-				self.serializedObject.ApplyModifiedProperties();
-			}
-		}
+		//private void OnDestroy()
+		//{
+		//	if (self != null && dataList != null)
+		//	{
+		//		self.intValue = dataList.index;
+		//		self.serializedObject.ApplyModifiedProperties();
+		//	}
+		//}
 
 
 		Vector2 scroll = Vector2.zero;
@@ -119,9 +122,9 @@ namespace GraphTool
 
 				dataList.DoLayoutList();
 
-				var height = Mathf.Min(dataList.count * dataList.elementHeight + 120f, 500f);
-				minSize = new Vector2(400f, height);
-				maxSize = new Vector2(400f, height);
+				var height = Mathf.Min(dataList.count * dataList.elementHeight + 120f, WINDOW_MAX_HEIGHT);
+				minSize = new Vector2(WINDOW_WIDTH, height);
+				maxSize = new Vector2(WINDOW_WIDTH, height);
 			}
 			EditorGUILayout.EndScrollView();
 			

@@ -1,13 +1,4 @@
-﻿/**
-Graph Tool
-
-Copyright (c) 2017 Sokuhatiku
-
-This software is released under the MIT License.
-http://opensource.org/licenses/mit-license.php
-*/
-
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace GraphTool.Test
@@ -79,7 +70,7 @@ namespace GraphTool.Test
 				else newValue = (Max + Min) / 2;
 				if (Continuity) value = Mathf.Clamp(value + newValue, Min, Max);
 				else value = newValue;
-				graph.SetCurrentData(dataKey, value);
+				graph.SetData(dataKey, value);
 				yield return new WaitForSeconds(interval);
 			}
 		}

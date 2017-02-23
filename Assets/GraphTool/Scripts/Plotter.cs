@@ -40,8 +40,6 @@ namespace GraphTool
 			var data = handler.GetDataEnumerator(dataKey);
 			var time = handler.GetDataEnumerator(GraphHandler.SYSKEY_TIMESTAMP);
 
-			RecalculateScale();
-
 			vh.Clear();
 			Vector2? prevPoint = null;
 			var rect = rectTransform.rect;
@@ -49,7 +47,7 @@ namespace GraphTool
 			for (int i = 0; time.MoveNext() && data.MoveNext(); ++i)
 			{
 				if (time.Current == null || data.Current == null) continue;
-				var point = TransformPoint(new Vector2(time.Current.Value, data.Current.Value));
+				var point = ScopeToRect(new Vector2(time.Current.Value, data.Current.Value));
 				if ((point.x < rect.xMin && prevPoint != null && prevPoint.Value.x < rect.xMin) ||
 					(point.x > rect.xMax && prevPoint != null && prevPoint.Value.x > rect.xMax))
 					if (skipTrigger) break; else continue;

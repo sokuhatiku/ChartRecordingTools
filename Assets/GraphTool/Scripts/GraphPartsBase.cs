@@ -17,7 +17,7 @@ namespace GraphTool
 		ILayoutElement,
 		ICanvasRaycastFilter
 	{
-		[SerializeField, HideInInspector]protected GraphHandler handler;
+		[SerializeField]protected GraphHandler handler;
 		protected Vector2 transration;
 		protected Vector2 scale;
 		protected Vector2 offset;
@@ -47,30 +47,42 @@ namespace GraphTool
 
 		protected virtual void UpdateGraph()
 		{
+			if (handler == null) return;
+			RecalculateScale();
 			SetVerticesDirty();
 		}
 
 		protected virtual void RecalculateScale()
 		{
-			var scope = handler.GetScope();
-			var rect = rectTransform.rect;
+			var scopeRect = handler.GetScope();
+			var tfRect = rectTransform.rect;
 			var pivot = rectTransform.pivot;
 
-			transration = -scope.position;
+			transration = -scopeRect.position;
 			scale = new Vector2(
-				rect.width / scope.width,
-				rect.height / scope.height);
+				tfRect.width / scopeRect.width,
+				tfRect.height / scopeRect.height);
 			offset = new Vector2(
-				-pivot.x * rect.width,
-				-pivot.y * rect.height);
+				-pivot.x * tfRect.width,
+				-pivot.y * tfRect.height);
 		}
 
-		protected Vector2 TransformPoint(Vector2 point)
+		protected Vector2 ScopeToRect(Vector2 point)
 		{
 			point += transration;
 			point.Scale(scale);
 			point += offset;
 			return point;
+		}
+
+		protected float ScopeToRectX(float x)
+		{
+			return (x + transration.x) * scale.x + offset.x;
+		}
+
+		protected float ScopeToRectY(float y)
+		{
+			return (y + transration.y) * scale.y + offset.y;
 		}
 
 
@@ -118,8 +130,8 @@ namespace GraphTool
 			vh.AddVert(to + lSide, toColor, Vector2.zero);
 
 			var vertId = vh.currentVertCount - 1;
-			vh.AddTriangle(vertId - 3, vertId - 2, vertId - 1);
-			vh.AddTriangle(vertId - 1, vertId, vertId - 3);
+			vh.AddTriangle(vertId - 1, vertId - 2, vertId - 3);
+			vh.AddTriangle(vertId - 3, vertId, vertId - 1);
 		}
 
 

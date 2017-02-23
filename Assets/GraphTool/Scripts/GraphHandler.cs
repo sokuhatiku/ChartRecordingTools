@@ -33,7 +33,7 @@ namespace GraphTool
 
 
 
-		private Rect ScopeRect;
+		[SerializeField]private Rect ScopeRect;
 
 		public Rect GetScope()
 		{
@@ -64,18 +64,21 @@ namespace GraphTool
 
 		public IEnumerator<float?> GetDataEnumerator(int dataKey)
 		{
+			if (dataKey < 0) throw new ArgumentException("Data does not exist at specified key.", "dataKey");
 			if (!HasData(dataKey)) RegisterInternal(dataKey, new Data("data " + dataKey));
 			return dataList[dataKey].GetEnumerator();
 		}
 
-		public float? GetCurrentData(int dataKey)
+		public float? GetData(int dataKey)
 		{
+			if (dataKey < 0) return null;
 			if (!HasData(dataKey)) RegisterInternal(dataKey, new Data("data " + dataKey));
 			return dataList[dataKey].GetCurrent();
 		}
 
-		public void SetCurrentData(int dataKey, float value)
+		public void SetData(int dataKey, float value)
 		{
+			if (dataKey < 0) return;
 			if (!HasData(dataKey)) RegisterInternal(dataKey, new Data("data " + dataKey));
 			if (dataKey < COUNT_SYSKEY) throw new ArgumentException("System data can not set data.", "dataKey");
 			dataList[dataKey].SetCurrent(value);

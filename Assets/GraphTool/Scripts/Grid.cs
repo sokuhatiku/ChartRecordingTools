@@ -44,7 +44,6 @@ namespace GraphTool
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
 			if (handler == null) return;
-			RecalculateScale();
 
 			vh.Clear();
 			if (GridRadius <= 0) return;
@@ -69,8 +68,8 @@ namespace GraphTool
 					if (!SkipTrigger) continue; else break;
 				else SkipTrigger = true;
 
-				var from = TransformPoint(new Vector3(x, scope.yMin));
-				var to = TransformPoint(new Vector3(x, scope.yMax));
+				var from = ScopeToRect(new Vector3(x, scope.yMin));
+				var to = ScopeToRect(new Vector3(x, scope.yMax));
 
 				var isMain = i % xSubdivision == 0;
 				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
@@ -87,8 +86,8 @@ namespace GraphTool
 					if (!SkipTrigger) continue; else break;
 				else SkipTrigger = true;
 
-				var from = TransformPoint(new Vector3(scope.xMin, y));
-				var to = TransformPoint(new Vector3(scope.xMax, y));
+				var from = ScopeToRect(new Vector3(scope.xMin, y));
+				var to = ScopeToRect(new Vector3(scope.xMax, y));
 
 				var isMain = i % ySubdivision == 0;
 				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
