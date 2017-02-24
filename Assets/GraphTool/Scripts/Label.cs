@@ -16,6 +16,7 @@ namespace GraphTool
 
 	public class Label : GraphPartsBase
 	{
+		const int generatorCreations = 11;
 		public bool direction;
 		public Font font;
 
@@ -42,8 +43,8 @@ namespace GraphTool
 		{
 			base.OnEnable();
 
-			generators = new List<TextGenerator>(20);
-			for(int i=0; i<20; ++i)
+			generators = new List<TextGenerator>(generatorCreations);
+			for(int i=0; i< generatorCreations; ++i)
 				generators.Add(new TextGenerator());
 		}
 
@@ -54,48 +55,44 @@ namespace GraphTool
 			if (handler == null || font == null) return;
 
 			vh.Clear();
-			var spacing = direction ?
+			var grid = direction ?
 				handler.GridScale.x :
 				handler.GridScale.y;
-			var Scope = handler.ScopeRect;
-			var Tf = rectTransform.rect;
-			var pivot = rectTransform.pivot;
+			if (grid <= Mathf.Epsilon) return; // Just in case
 
-			var drawCount = direction ? 
-				Mathf.CeilToInt(Scope.width / spacing) + 1:
-				Mathf.CeilToInt(Scope.height / spacing) + 1;
-			while(drawCount > generators.Count)
-			{
-				//Debug.Log(drawCount + " > " + generators.Count);
-				spacing *= 2;
-				drawCount /= 2;
-			}
+			var width = direction ?
+				handler.ScopeRect.width :
+				handler.ScopeRect.height;
 
-			var startNum = direction ?
-				Mathf.FloorToInt(Scope.xMin / spacing) :
-				Mathf.FloorToInt(Scope.yMin / spacing);
-			float offset = direction ?
-				-(Scope.xMin % spacing):
-				-(Scope.yMin % spacing);
-			if (offset > 0) offset -= spacing; // Graph: /|/|/|/|/|
+			var pos = direction ?
+				handler.ScopeRect.xMin :
+				handler.ScopeRect.yMin;
 
-			var set = direction ? 
-				new Vector3(ScopeToRectX(Scope.xMin + offset), (-pivot.y + 0.5f) * Tf.height, 0) :
-				new Vector3((-pivot.x + 0.5f) * Tf.width, ScopeToRectY(Scope.yMin + offset),  0) ;
+			var draws = Mathf.CeilToInt(width / grid) +1;
+			while (draws > generators.Count) { grid *= 2; draws = (draws >> 1) +1; }
+			var offset = -(pos % grid);
+			if (offset > 0) offset -= grid; // Graph shape to "/|/|/|/|/|"
+			var startNum = Mathf.FloorToInt(pos / grid);
+
+
+			// convert to rectTransform position
+			var set = direction ?
+				new Vector3(ScopeToRectX(pos + offset), (-rectTransform.pivot.y + 0.5f) * rectTransform.rect.height) :
+				new Vector3((-rectTransform.pivot.x + 0.5f) * rectTransform.rect.width, ScopeToRectY(pos + offset));
 			var gain = direction ?
-				new Vector3(spacing * scale.x, 0f) :
-				new Vector3(0f, spacing * scale.y) ;
+				new Vector3(grid * scale.x, 0f) :
+				new Vector3(0f, grid * scale.y) ;
 
-			var generatorID = 0;
-
+			// draw
 			var setting = GetTextSetting();
-			for (int i= -Mathf.Epsilon < offset ? 0 : 1; i < drawCount; ++i)
+			var generatorID = 0;
+			for (int i = -Mathf.Epsilon < offset ? 0 : 1; i < draws; ++i)
 			{
 				var transration = set + gain * i;
 				if (direction ?
-					transration.x < Tf.xMin + 0.01f || Tf.xMax + 0.01f < transration.x :
-					transration.y < Tf.yMin + 0.01f || Tf.yMax + 0.01f < transration.y) continue;
-				generators[generatorID].Populate((spacing * (startNum + i)).ToString("#0.#"), setting);
+					transration.x < rectTransform.rect.xMin + 0.01f || rectTransform.rect.xMax + 0.01f < transration.x :
+					transration.y < rectTransform.rect.yMin + 0.01f || rectTransform.rect.yMax + 0.01f < transration.y) continue;
+				generators[generatorID].Populate((grid * (startNum + i)).ToString("#0.#"), setting);
 				IList<UIVertex> verts = generators[generatorID].verts;
 
 				var vertexCount = verts.Count - 4;
@@ -109,7 +106,7 @@ namespace GraphTool
 				}
 				generatorID++;
 			}
-			
+
 		}
 
 		public int fontsize = 14;

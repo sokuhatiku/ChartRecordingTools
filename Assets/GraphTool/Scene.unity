@@ -315,7 +315,7 @@ Canvas:
   m_GameObject: {fileID: 325958790}
   m_Enabled: 1
   serializedVersion: 2
-  m_RenderMode: 2
+  m_RenderMode: 1
   m_Camera: {fileID: 1399738313}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
@@ -333,8 +333,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 325958790}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -29}
-  m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1622823461}
   m_Father: {fileID: 0}
@@ -342,9 +342,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 34.099003, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1}
-  m_SizeDelta: {x: 455, y: 284}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &485821858
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 12.5}
+  m_AnchoredPosition: {x: -2, y: 12.5}
   m_SizeDelta: {x: 25, y: -25}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &534256480
@@ -562,7 +562,7 @@ MonoBehaviour:
   handler: {fileID: 1622823462}
   direction: 0
   font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  fontsize: 15
+  fontsize: 14
   scaleFacter: 1
   anchor: 5
 --- !u!222 &534256481
@@ -1305,7 +1305,7 @@ MonoBehaviour:
   handler: {fileID: 1622823462}
   direction: 1
   font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  fontsize: 20
+  fontsize: 14
   scaleFacter: 1
   anchor: 1
 --- !u!222 &1468089729
@@ -1324,6 +1324,7 @@ GameObject:
   - component: {fileID: 1622823461}
   - component: {fileID: 1622823462}
   - component: {fileID: 1622823463}
+  - component: {fileID: 1622823464}
   m_Layer: 5
   m_Name: GraphBoard
   m_TagString: Untagged
@@ -1351,7 +1352,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -100, y: -100}
+  m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1622823462
 MonoBehaviour:
@@ -1365,12 +1366,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scopeOffset: {x: 0, y: 0}
-  _scopeSize: {x: 10, y: 50}
-  _scopeMargin: {x: 0, y: 10}
+  _scopeSize: {x: 10, y: 60}
+  _scopeMargin: {x: 0, y: 1}
   _scopeUnsigned: 0
   _updateTiming: 0
   _gridScale: {x: 1, y: 10}
-  _gridXSubdivision: 10
+  _gridXSubdivision: 2
   _gridYSubdivision: 10
   dataList:
   - name: Timestamp
@@ -1393,6 +1394,17 @@ MonoBehaviour:
   posY: 2
   posZ: 3
   target: {fileID: 913258897}
+--- !u!114 &1622823464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1622823460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1675802634
 GameObject:
   m_ObjectHideFlags: 0
