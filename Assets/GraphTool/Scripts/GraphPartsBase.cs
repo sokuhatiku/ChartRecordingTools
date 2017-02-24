@@ -54,7 +54,7 @@ namespace GraphTool
 
 		protected virtual void RecalculateScale()
 		{
-			var scopeRect = handler.GetScope();
+			var scopeRect = handler.ScopeRect;
 			var tfRect = rectTransform.rect;
 			var pivot = rectTransform.pivot;
 

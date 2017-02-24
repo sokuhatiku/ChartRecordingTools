@@ -37,6 +37,7 @@ namespace GraphTool
 			serializedObject.Update();
 
 			ScopeEditor();
+			GridEditor();
 			DataListEditor();
 
 			serializedObject.ApplyModifiedProperties();
@@ -54,6 +55,26 @@ namespace GraphTool
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeSize"), new GUIContent("Scale"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeMargin"), new GUIContent("Margin"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeUnsigned"), new GUIContent("Unsigned"));
+
+			EditorGUILayout.EndVertical();
+		}
+
+		void GridEditor()
+		{
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+
+			EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridScale"), new GUIContent("Scale"));
+
+			var subX = serializedObject.FindProperty("_gridXSubdivision");
+			var subY = serializedObject.FindProperty("_gridYSubdivision");
+
+			var newDiv = EditorGUILayout.Vector2Field("Subdivision", new Vector2(subX.intValue, subY.intValue));
+			newDiv -= new Vector2(subX.intValue, subY.intValue);
+			if (newDiv.x > 0) subX.intValue += Mathf.CeilToInt(newDiv.x);
+			else if (newDiv.x < 0) subX.intValue += Mathf.FloorToInt(newDiv.x);
+			if (newDiv.y > 0) subY.intValue += Mathf.CeilToInt(newDiv.y);
+			else if (newDiv.y < 0) subY.intValue += Mathf.FloorToInt(newDiv.y);
 
 			EditorGUILayout.EndVertical();
 		}

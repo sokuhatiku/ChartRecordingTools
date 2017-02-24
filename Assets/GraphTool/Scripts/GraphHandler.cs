@@ -31,24 +31,44 @@ namespace GraphTool
 		}
 		[SerializeField]protected UpdateTiming _updateTiming = UpdateTiming.EveryFrame;
 
+		private Rect _scopeRect;
+		public Rect ScopeRect { get { return _scopeRect; } }
+		[SerializeField]protected Vector2 _gridScale;
+		public Vector2 GridScale{ get { return _gridScale; } }
+		[SerializeField]protected int _gridXSubdivision;
+		public int GridSubdivisionX { get { return _gridXSubdivision; } }
+		[SerializeField]protected int _gridYSubdivision;
+		public int GridSubdivisionY { get { return _gridYSubdivision; } }
 
-
-		[SerializeField]private Rect ScopeRect;
-
-		public Rect GetScope()
+		private void OnValidate()
 		{
-			return ScopeRect;
+			_scopeSize = new Vector2(
+				_scopeSize.x < limit ? limit : _scopeSize.x,
+				_scopeSize.y < limit ? limit : _scopeSize.y);
+			_scopeMargin = new Vector2(
+				_scopeMargin.x < 0 ? 0 : _scopeMargin.x,
+				_scopeMargin.y < 0 ? 0 : _scopeMargin.y);
+
+			_gridScale = new Vector2(
+				_gridScale.x < limit ? limit : _gridScale.x,
+				_gridScale.y < limit ? limit : _gridScale.y);
+			_gridXSubdivision = Mathf.Max(_gridXSubdivision, 1);
+			_gridYSubdivision = Mathf.Max(_gridYSubdivision, 1);
+
+			UpdateGraph();
 		}
+
+
 
 		public Action OnUpdateGraph;
 
 		public void UpdateGraph()
 		{
-			ScopeRect = new Rect(_scopeOffset, _scopeSize);
-			ScopeRect.x -= _scopeSize.x;
-			if (!_scopeUnsigned) ScopeRect.y -= _scopeSize.y / 2;
-			ScopeRect.max += _scopeMargin;
-			ScopeRect.min -= _scopeMargin;
+			_scopeRect = new Rect(_scopeOffset, _scopeSize);
+			_scopeRect.x -= _scopeSize.x;
+			if (!_scopeUnsigned) _scopeRect.y -= _scopeSize.y / 2;
+			_scopeRect.max += _scopeMargin;
+			_scopeRect.min -= _scopeMargin;
 
 			if (OnUpdateGraph != null)
 				OnUpdateGraph();
@@ -114,17 +134,6 @@ namespace GraphTool
 		public const int SYSKEY_TIMESTAMP = 0;
 
 
-
-		private void OnValidate()
-		{
-			_scopeSize = new Vector2(
-				_scopeSize.x < limit ? limit : _scopeSize.x,
-				_scopeSize.y < limit ? limit : _scopeSize.y);
-			_scopeMargin = new Vector2(
-				_scopeMargin.x < 0 ? 0 : _scopeMargin.x,
-				_scopeMargin.y < 0 ? 0 : _scopeMargin.y);
-			UpdateGraph();
-		}
 
 		private void Reset()
 		{
