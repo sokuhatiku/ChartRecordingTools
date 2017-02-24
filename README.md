@@ -1,5 +1,6 @@
 # GraphTool
 This is a simply realtime plotting tool for uGUI.
+Warning: This project is in alpha version. This contains many bugs, many possibility of sudden specification change, and many Engrish.
 
 uGUI上で動作する（今はまだ）シンプルなリアルタイムプロットツールです。
 
