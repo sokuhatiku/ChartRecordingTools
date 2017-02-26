@@ -43,7 +43,6 @@ namespace GraphTool
 
 			vh.Clear();
 			Vector2? prevPoint = null;
-			//Vector2? prevDir = null;
 			var rect = rectTransform.rect;
 			for (int i = 0; time.MoveNext() && data.MoveNext(); ++i)
 			{
@@ -54,11 +53,6 @@ namespace GraphTool
 					if (point.x > rect.xMax && prevPoint.Value.x > rect.xMax) continue;
 					else if ((point.x < rect.xMin && prevPoint.Value.x < rect.xMin)) break;
 					else if (Mathf.Abs(prevPoint.Value.x - point.x) < 1f) continue;
-
-					//var dir = point - prevPoint.Value;
-					//if(prevDir != null && Vector2.Angle(prevDir.Value, dir) < skipDrawAngle) continue;
-					//prevDir = dir;
-
 				}
 
 				if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
