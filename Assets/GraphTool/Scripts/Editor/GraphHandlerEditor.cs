@@ -52,7 +52,7 @@ namespace GraphTool
 
 			EditorGUILayout.LabelField("Scope", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeOffset"),new GUIContent("Offset"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeSize"), new GUIContent("Scale"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeScale"), new GUIContent("Scale"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeMargin"), new GUIContent("Margin"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeUnsigned"), new GUIContent("Unsigned"));
 
@@ -75,6 +75,9 @@ namespace GraphTool
 			else if (newDiv.x < 0) subX.intValue += Mathf.FloorToInt(newDiv.x);
 			if (newDiv.y > 0) subY.intValue += Mathf.CeilToInt(newDiv.y);
 			else if (newDiv.y < 0) subY.intValue += Mathf.FloorToInt(newDiv.y);
+
+			EditorGUILayout.LabelField("Auto Scaling", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridAutoScalingThreshold"), new GUIContent("Threshold"));
 
 			EditorGUILayout.EndVertical();
 		}

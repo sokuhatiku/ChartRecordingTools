@@ -19,7 +19,7 @@ namespace GraphTool
 		const float limit = 0.01f;
 		
 		[SerializeField]protected Vector2 _scopeOffset = new Vector2(0, 0);
-		[SerializeField]protected Vector2 _scopeSize = new Vector2(5f, 200f);
+		[SerializeField]protected Vector2 _scopeScale = new Vector2(5f, 200f);
 		[SerializeField]protected Vector2 _scopeMargin = new Vector2(0f, 10f);
 		[SerializeField]protected bool _scopeUnsigned = false;
 
@@ -33,18 +33,20 @@ namespace GraphTool
 
 		private Rect _scopeRect;
 		public Rect ScopeRect { get { return _scopeRect; } }
-		[SerializeField]protected Vector2 _gridScale;
+		[SerializeField]protected Vector2 _gridScale = new Vector2(1, 10);
 		public Vector2 GridScale{ get { return _gridScale; } }
-		[SerializeField]protected int _gridXSubdivision;
+		[SerializeField]protected int _gridXSubdivision = 10;
 		public int GridSubdivisionX { get { return _gridXSubdivision; } }
-		[SerializeField]protected int _gridYSubdivision;
+		[SerializeField]protected int _gridYSubdivision = 10;
 		public int GridSubdivisionY { get { return _gridYSubdivision; } }
+		[SerializeField]protected int _gridAutoScalingThreshold = 15;
+		public int GridAutoScalingThreshold { get { return _gridAutoScalingThreshold; } }
 
 		private void OnValidate()
 		{
-			_scopeSize = new Vector2(
-				_scopeSize.x < limit ? limit : _scopeSize.x,
-				_scopeSize.y < limit ? limit : _scopeSize.y);
+			_scopeScale = new Vector2(
+				_scopeScale.x < limit ? limit : _scopeScale.x,
+				_scopeScale.y < limit ? limit : _scopeScale.y);
 			_scopeMargin = new Vector2(
 				_scopeMargin.x < 0 ? 0 : _scopeMargin.x,
 				_scopeMargin.y < 0 ? 0 : _scopeMargin.y);
@@ -55,18 +57,23 @@ namespace GraphTool
 			_gridXSubdivision = Mathf.Max(_gridXSubdivision, 1);
 			_gridYSubdivision = Mathf.Max(_gridYSubdivision, 1);
 
+			_gridAutoScalingThreshold = Mathf.Max(10, _gridAutoScalingThreshold);
+
 			UpdateGraph();
 		}
 
-
+		private void OnRectTransformDimensionsChange()
+		{
+			UpdateGraph();
+		}
 
 		public Action OnUpdateGraph;
 
 		public void UpdateGraph()
 		{
-			_scopeRect = new Rect(_scopeOffset, _scopeSize);
-			_scopeRect.x -= _scopeSize.x;
-			if (!_scopeUnsigned) _scopeRect.y -= _scopeSize.y / 2;
+			_scopeRect = new Rect(_scopeOffset, _scopeScale);
+			_scopeRect.x -= _scopeScale.x;
+			if (!_scopeUnsigned) _scopeRect.y -= _scopeScale.y / 2;
 			_scopeRect.max += _scopeMargin;
 			_scopeRect.min -= _scopeMargin;
 

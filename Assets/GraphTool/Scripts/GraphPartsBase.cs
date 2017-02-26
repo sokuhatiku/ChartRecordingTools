@@ -85,6 +85,24 @@ namespace GraphTool
 			return (y + transration.y) * scale.y + offset.y;
 		}
 
+		protected Vector2 RectToScope(Vector2 point)
+		{
+			point -= offset;
+			point = new Vector2(point.x / scale.x, point.y / scale.y);
+			point -= transration;
+			return point;
+		}
+
+		protected float RectToScopeX(float x)
+		{
+			return (x - offset.x) / scale.x - transration.x;
+		}
+
+		protected float RectToScopeY(float y)
+		{
+			return (y - offset.y) / scale.y - transration.y;
+		}
+
 
 		protected virtual void AddDot(VertexHelper vh, Vector3 pt, float radius)
 		{

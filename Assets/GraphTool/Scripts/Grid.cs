@@ -17,14 +17,9 @@ namespace GraphTool
 	[ExecuteInEditMode]
 	public class Grid : GraphPartsBase
 	{
-		const float limit = 1f / 60f;
-
-		//public Vector2 GridSpacing = new Vector2(1f,10f);
 		public float GridRadius = 1f;
 
 		[Space]
-		//public int xSubdivision = 1;
-		//public int ySubdivision = 10;
 		public float subGridRadius = 0.5f;
 		public Color subGridColor = new Color(1,1,1,0.5f);
 
@@ -32,11 +27,6 @@ namespace GraphTool
 #if UNITY_EDITOR
 		protected override void OnValidate()
 		{
-			//GridSpacing = new Vector2(
-			//	GridSpacing.x < limit ? limit : GridSpacing.x,
-			//	GridSpacing.y < limit ? limit : GridSpacing.y);
-			//xSubdivision = Mathf.Max(xSubdivision, 1);
-			//ySubdivision = Mathf.Max(ySubdivision, 1);
 			UpdateGraph();
 		}
 #endif
@@ -46,55 +36,72 @@ namespace GraphTool
 			if (handler == null) return;
 
 			vh.Clear();
-			if (GridRadius <= 0) return;
-			var subdivisionX = handler.GridSubdivisionX;
-			var subdivisionY = handler.GridSubdivisionY;
-			var gridScale = handler.GridScale;
-			var scaleX = gridScale.x / subdivisionX;
-			var scaleY = gridScale.y / subdivisionY;
-			var scope = handler.ScopeRect;
-			scope.xMin -= scaleX;
-			scope.xMax += scaleX;
-			scope.yMin -= scaleY;
-			scope.yMax += scaleY;
+			DrawGrid(vh, true);
+			DrawGrid(vh, false);
+
+		}
+
+		void DrawGrid(VertexHelper vh, bool direction)
+		{
+			var gridsize = direction ?
+				handler.GridScale.x :
+				handler.GridScale.y;
+			if (gridsize < 0.01f) return;
+
+			var subdivision = direction ?
+				handler.GridSubdivisionX :
+				handler.GridSubdivisionY;
+			if (subdivision < 1) return;
+
+			var width = direction ?
+				handler.ScopeRect.width :
+				handler.ScopeRect.height;
+
+			var start = direction ?
+				handler.ScopeRect.xMin :
+				handler.ScopeRect.yMin;
+			
+
+			var draws = Mathf.CeilToInt(width / gridsize) + 1;
+			while (draws > handler.GridAutoScalingThreshold)
+			{ gridsize *= subdivision; draws = Mathf.CeilToInt(draws / subdivision); }
+			draws += 2;
+
+			// split to subgrid
+			draws *= subdivision;
+			gridsize /= subdivision;
+
+			var startNum = Mathf.FloorToInt(start / gridsize);
+			var offset = -(start % gridsize);
+			if (offset > 0) offset -= gridsize; // Graph shape to "/|/|/|/|/|"
 
 
-			bool SkipTrigger = false;
-			float xOffset = scope.xMin - (scope.xMin % gridScale.x);
-			int xCount = Mathf.CeilToInt(scope.width / gridScale.x) * subdivisionX;
-			if (scope.x >= 0) xCount += subdivisionX;
-			for (int i= scope.x < 0 ? -subdivisionX : 0 ; i < xCount ; ++i)
+			// convert to rectTransform position
+			var tf_set = direction ?
+				ScopeToRectX(start + offset) :
+				ScopeToRectY(start + offset);
+			var tf_gain = direction ?
+				gridsize * scale.x :
+				gridsize * scale.y;
+
+			// draw
+			for (int i =  0; i < draws; ++i)
 			{
-				var x = xOffset + scaleX * i;
-				if (!scope.Contains(new Vector2(x, scope.center.y)))
-					if (!SkipTrigger) continue; else break;
-				else SkipTrigger = true;
+				var isMain = (startNum + i) % subdivision == 0;
+				var translated = tf_set + tf_gain * i;
+				if (direction ?
+					translated < rectTransform.rect.xMin - 1 || rectTransform.rect.xMax + 1 < translated :
+					translated < rectTransform.rect.yMin - 1 || rectTransform.rect.yMax + 1 < translated) continue;
 
-				var from = ScopeToRect(new Vector3(x, scope.yMin));
-				var to = ScopeToRect(new Vector3(x, scope.yMax));
+				var from = direction ?
+					new Vector3(translated, rectTransform.rect.yMin) :
+					new Vector3(rectTransform.rect.xMin, translated);
+				var to = direction ?
+					new Vector3(translated, rectTransform.rect.yMax) :
+					new Vector3(rectTransform.rect.xMax, translated);
 
-				var isMain = i % subdivisionX == 0;
 				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
 			}
-
-			SkipTrigger = false;
-			float yOffset = scope.yMin - (scope.yMin % gridScale.y);
-			int yCount = Mathf.CeilToInt(scope.height / gridScale.y) * subdivisionY;
-			if (scope.y >= 0) yCount += subdivisionY;
-			for (int i = scope.y < 0 ? -subdivisionY : 0 ; i < yCount ; ++i)
-			{
-				var y = yOffset + scaleY * i;
-				if (!scope.Contains(new Vector2(scope.center.x, y)))
-					if (!SkipTrigger) continue; else break;
-				else SkipTrigger = true;
-
-				var from = ScopeToRect(new Vector3(scope.xMin, y));
-				var to = ScopeToRect(new Vector3(scope.xMax, y));
-
-				var isMain = i % subdivisionY == 0;
-				AddLine(vh, from, to, isMain ? GridRadius : subGridRadius, isMain ? color : subGridColor);
-			}
-
 		}
 	}
 }

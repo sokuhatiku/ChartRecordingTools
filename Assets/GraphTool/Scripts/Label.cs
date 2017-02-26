@@ -16,7 +16,7 @@ namespace GraphTool
 
 	public class Label : GraphPartsBase
 	{
-		const int generatorCreations = 11;
+		const int generatorCreations = 16;
 		public bool direction;
 		public Font font;
 
@@ -38,61 +38,71 @@ namespace GraphTool
 			font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 		}
 #endif
+		
 
-		protected override void OnEnable()
-		{
-			base.OnEnable();
-
-			generators = new List<TextGenerator>(generatorCreations);
-			for(int i=0; i< generatorCreations; ++i)
-				generators.Add(new TextGenerator());
-		}
-
-		List<TextGenerator> generators;
+		List<TextGenerator> generators = new List<TextGenerator>();
 		readonly UIVertex[] m_TempVerts = new UIVertex[4];
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
 			if (handler == null || font == null) return;
 
+			if(generators.Count != handler.GridAutoScalingThreshold + 2)
+			{
+				while (generators.Count < handler.GridAutoScalingThreshold + 2)
+					generators.Add(new TextGenerator());
+				while (generators.Count > handler.GridAutoScalingThreshold + 2)
+					generators.RemoveAt(generators.Count - 1);
+			}
+
 			vh.Clear();
-			var grid = direction ?
+			var gridSize = direction ?
 				handler.GridScale.x :
 				handler.GridScale.y;
-			if (grid <= Mathf.Epsilon) return; // Just in case
+			if (gridSize < 0.01f) return;
+
+			var subdivision = direction ?
+				handler.GridSubdivisionX :
+				handler.GridSubdivisionY;
+			if (subdivision < 1) return;
 
 			var width = direction ?
 				handler.ScopeRect.width :
 				handler.ScopeRect.height;
 
-			var pos = direction ?
+			var start = direction ?
 				handler.ScopeRect.xMin :
 				handler.ScopeRect.yMin;
 
-			var draws = Mathf.CeilToInt(width / grid) +1;
-			while (draws > generators.Count) { grid *= 2; draws = (draws >> 1) +1; }
-			var offset = -(pos % grid);
-			if (offset > 0) offset -= grid; // Graph shape to "/|/|/|/|/|"
-			var startNum = Mathf.FloorToInt(pos / grid);
+			var draws = Mathf.CeilToInt(width / gridSize) +1;
+			while (draws > handler.GridAutoScalingThreshold)
+			{ gridSize *= subdivision; draws = Mathf.CeilToInt(draws / subdivision); }
+			draws += 2;
+
+			var startNum = Mathf.FloorToInt(start / gridSize);
+			var offset = -(start % gridSize);
+			if (offset > 0) offset -= gridSize; // Graph shape to "/|/|/|/|/|"
 
 
 			// convert to rectTransform position
-			var set = direction ?
-				new Vector3(ScopeToRectX(pos + offset), (-rectTransform.pivot.y + 0.5f) * rectTransform.rect.height) :
-				new Vector3((-rectTransform.pivot.x + 0.5f) * rectTransform.rect.width, ScopeToRectY(pos + offset));
-			var gain = direction ?
-				new Vector3(grid * scale.x, 0f) :
-				new Vector3(0f, grid * scale.y) ;
+			var tf_set = direction ?
+				ScopeToRectX(start + offset) :
+				ScopeToRectY(start + offset);
+			var tf_gain = direction ?
+				gridSize * scale.x :
+				gridSize * scale.y;
 
 			// draw
 			var setting = GetTextSetting();
 			var generatorID = 0;
-			for (int i = -Mathf.Epsilon < offset ? 0 : 1; i < draws; ++i)
+			for (int i = 0; i < draws; ++i)
 			{
-				var transration = set + gain * i;
+				var translated = direction ? new Vector3(tf_set + tf_gain * i, (-rectTransform.pivot.y + 0.5f) * rectTransform.rect.height) :
+					new Vector3((-rectTransform.pivot.x + 0.5f) * rectTransform.rect.width, tf_set + tf_gain * i);
 				if (direction ?
-					transration.x < rectTransform.rect.xMin + 0.01f || rectTransform.rect.xMax + 0.01f < transration.x :
-					transration.y < rectTransform.rect.yMin + 0.01f || rectTransform.rect.yMax + 0.01f < transration.y) continue;
-				generators[generatorID].Populate((grid * (startNum + i)).ToString("#0.#"), setting);
+					translated.x < rectTransform.rect.xMin - 1 || rectTransform.rect.xMax + 1 < translated.x :
+					translated.y < rectTransform.rect.yMin - 1 || rectTransform.rect.yMax + 1 < translated.y) continue;
+
+				generators[generatorID].Populate((gridSize * (startNum + i)).ToString("#0.#"), setting);
 				IList<UIVertex> verts = generators[generatorID].verts;
 
 				var vertexCount = verts.Count - 4;
@@ -100,7 +110,7 @@ namespace GraphTool
 				{
 					int tempVertsIndex = v & 3;
 					m_TempVerts[tempVertsIndex] = verts[v];
-					m_TempVerts[tempVertsIndex].position += transration;
+					m_TempVerts[tempVertsIndex].position += translated;
 					if (tempVertsIndex == 3)
 						vh.AddUIVertexQuad(m_TempVerts);
 				}
