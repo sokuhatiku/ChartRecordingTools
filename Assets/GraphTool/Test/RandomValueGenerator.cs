@@ -70,7 +70,7 @@ namespace GraphTool.Test
 				else newValue = (Max + Min) / 2;
 				if (Continuity) value = Mathf.Clamp(value + newValue, Min, Max);
 				else value = newValue;
-				graph.SetData(dataKey, value);
+				graph.SetValue(dataKey, value);
 				yield return new WaitForSeconds(interval);
 			}
 		}

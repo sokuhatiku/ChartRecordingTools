@@ -15,9 +15,9 @@ namespace GraphTool.Test
 		{
 			if(graph != null && target != null)
 			{
-				graph.SetData(posX, target.position.x);
-				graph.SetData(posY, target.position.y);
-				graph.SetData(posZ, target.position.z);
+				graph.SetValue(posX, target.position.x);
+				graph.SetValue(posY, target.position.y);
+				graph.SetValue(posZ, target.position.z);
 			}
 		}
 	}

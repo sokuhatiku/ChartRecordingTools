@@ -46,11 +46,11 @@ namespace GraphTool
 		{
 			if (handler == null || font == null) return;
 
-			if(generators.Count != handler.GridAutoScalingThreshold + 2)
+			if(generators.Count != handler.GridAutoScalingThresholdX + 2)
 			{
-				while (generators.Count < handler.GridAutoScalingThreshold + 2)
+				while (generators.Count < handler.GridAutoScalingThresholdX + 2)
 					generators.Add(new TextGenerator());
-				while (generators.Count > handler.GridAutoScalingThreshold + 2)
+				while (generators.Count > handler.GridAutoScalingThresholdX + 2)
 					generators.RemoveAt(generators.Count - 1);
 			}
 
@@ -74,7 +74,7 @@ namespace GraphTool
 				handler.ScopeRect.yMin;
 
 			var draws = Mathf.CeilToInt(width / gridSize) +1;
-			while (draws > handler.GridAutoScalingThreshold)
+			while (draws > handler.GridAutoScalingThresholdX)
 			{ gridSize *= subdivision; draws = Mathf.CeilToInt(draws / subdivision); }
 			draws += 2;
 

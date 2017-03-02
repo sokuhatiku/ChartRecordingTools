@@ -44,9 +44,9 @@ namespace GraphTool.Test
 		{
 			while (true)
 			{
-				graph.SetData(sin, Mathf.Sin(Time.time));
-				graph.SetData(cos, Mathf.Cos(Time.time));
-				graph.SetData(sin, Mathf.Tan(Time.time));
+				graph.SetValue(sin, Mathf.Sin(Time.time));
+				graph.SetValue(cos, Mathf.Cos(Time.time));
+				graph.SetValue(sin, Mathf.Tan(Time.time));
 				yield return new WaitForSeconds(interval);
 			}
 		}

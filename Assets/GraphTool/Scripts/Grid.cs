@@ -63,14 +63,16 @@ namespace GraphTool
 			
 
 			var draws = Mathf.CeilToInt(width / gridsize) + 1;
-			while (draws > handler.GridAutoScalingThreshold)
+			while (draws > handler.GridAutoScalingThresholdX)
 			{ gridsize *= subdivision; draws = Mathf.CeilToInt(draws / subdivision); }
 			draws += 2;
+
 
 			// split to subgrid
 			draws *= subdivision;
 			gridsize /= subdivision;
 
+			//if(direction)Debug.Log(start / gridsize);
 			var startNum = Mathf.FloorToInt(start / gridsize);
 			var offset = -(start % gridsize);
 			if (offset > 0) offset -= gridsize; // Graph shape to "/|/|/|/|/|"
@@ -85,7 +87,7 @@ namespace GraphTool
 				gridsize * scale.y;
 
 			// draw
-			for (int i =  0; i < draws; ++i)
+			for (int i = 0; i < draws; ++i)
 			{
 				var isMain = (startNum + i) % subdivision == 0;
 				var translated = tf_set + tf_gain * i;

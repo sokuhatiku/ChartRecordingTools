@@ -36,12 +36,26 @@ namespace GraphTool
 
 			serializedObject.Update();
 
+			GeneralEditor();
 			ScopeEditor();
 			GridEditor();
 			DataListEditor();
 
 			serializedObject.ApplyModifiedProperties();
 
+		}
+
+		void GeneralEditor()
+		{
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+
+			EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("recording"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("acceptUnregisteredKey"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoDetermine"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoScopeOffset"));
+
+			EditorGUILayout.EndVertical();
 		}
 
 
@@ -65,21 +79,22 @@ namespace GraphTool
 
 			EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridScale"), new GUIContent("Scale"));
-
-			var subX = serializedObject.FindProperty("_gridXSubdivision");
-			var subY = serializedObject.FindProperty("_gridYSubdivision");
-
-			var newDiv = EditorGUILayout.Vector2Field("Subdivision", new Vector2(subX.intValue, subY.intValue));
-			newDiv -= new Vector2(subX.intValue, subY.intValue);
-			if (newDiv.x > 0) subX.intValue += Mathf.CeilToInt(newDiv.x);
-			else if (newDiv.x < 0) subX.intValue += Mathf.FloorToInt(newDiv.x);
-			if (newDiv.y > 0) subY.intValue += Mathf.CeilToInt(newDiv.y);
-			else if (newDiv.y < 0) subY.intValue += Mathf.FloorToInt(newDiv.y);
+			intVector("Subdivision", serializedObject.FindProperty("_gridXSubdivision"), serializedObject.FindProperty("_gridYSubdivision"));
 
 			EditorGUILayout.LabelField("Auto Scaling", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridAutoScalingThreshold"), new GUIContent("Threshold"));
+			intVector("Threshold", serializedObject.FindProperty("_gridXAutoScalingThreshold"), serializedObject.FindProperty("_gridYAutoScalingThreshold"));
 
 			EditorGUILayout.EndVertical();
+		}
+
+		void intVector(string label, SerializedProperty x, SerializedProperty y)
+		{
+			var newDiv = EditorGUILayout.Vector2Field(label, new Vector2(x.intValue, y.intValue));
+			newDiv -= new Vector2(x.intValue, y.intValue);
+			if (newDiv.x > 0) x.intValue += Mathf.CeilToInt(newDiv.x);
+			else if (newDiv.x < 0) x.intValue += Mathf.FloorToInt(newDiv.x);
+			if (newDiv.y > 0) y.intValue += Mathf.CeilToInt(newDiv.y);
+			else if (newDiv.y < 0) y.intValue += Mathf.FloorToInt(newDiv.y);
 		}
 
 		void DataListEditor()

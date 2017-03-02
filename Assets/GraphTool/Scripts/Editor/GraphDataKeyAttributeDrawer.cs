@@ -24,6 +24,12 @@ namespace GraphTool
 				EditorGUI.LabelField(position, property.displayName, "(This attribute works only on integer property.)");
 				return;
 			}
+			if (property.hasMultipleDifferentValues)
+			{
+				EditorGUI.LabelField(position, property.displayName, "(Cannot edit multiple values)");
+				return;
+			}
+
 			var attr = (GraphDataKeyAttribute)attribute;
 			var handler = property.serializedObject.FindProperty(attr.handlerProperty);
 			if (handler.objectReferenceValue == null)
