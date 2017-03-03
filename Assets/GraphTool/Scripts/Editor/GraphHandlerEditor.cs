@@ -51,9 +51,9 @@ namespace GraphTool
 
 			EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("recording"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("acceptUnregisteredKey"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoDetermine"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoScopeOffset"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("acceptUnregisteredKey"));
 
 			EditorGUILayout.EndVertical();
 		}

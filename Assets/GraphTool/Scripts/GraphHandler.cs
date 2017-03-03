@@ -25,9 +25,14 @@ namespace GraphTool
 
 		float _startTime = 0f;
 		public bool recording = true;
-		public bool acceptUnregisteredKey = false;
+		public void RecordToggle(bool toggle)
+		{
+			recording = toggle;
+		}
 		public bool autoDetermine = true;
 		public bool autoScopeOffset = true;
+		public bool acceptUnregisteredKey = false;
+
 
 		[SerializeField]protected Vector2 _scopeOffset = new Vector2(0, 0);
 		[SerializeField]protected Vector2 _scopeScale = new Vector2(5f, 200f);
@@ -185,12 +190,12 @@ namespace GraphTool
 			if (autoScopeOffset)
 			{
 				_scopeOffset.x = GetLatestValue(SYSKEY_TIMESTAMP) ?? 0f;
-				_scopeRect = new Rect(_scopeOffset, _scopeScale);
-				_scopeRect.x -= _scopeScale.x;
-				if (!_scopeUnsigned) _scopeRect.y -= _scopeScale.y / 2;
-				_scopeRect.max += _scopeMargin;
-				_scopeRect.min -= _scopeMargin;
 			}
+			_scopeRect = new Rect(_scopeOffset, _scopeScale);
+			_scopeRect.x -= _scopeScale.x;
+			if (!_scopeUnsigned) _scopeRect.y -= _scopeScale.y / 2;
+			_scopeRect.max += _scopeMargin;
+			_scopeRect.min -= _scopeMargin;
 
 			if (OnUpdateGraph != null)
 				OnUpdateGraph();
@@ -204,32 +209,14 @@ namespace GraphTool
 			UpdateGraph();
 		}
 
-		bool cleared = false;
-		public void Clear()
+		public void ClearAll()
 		{
 			foreach (var data in dataList)
 				data.Clear();
 			_startTime = Time.time;
-			if(!recording) cleared = true;
 			_scopeOffset.x = 0;
 			UpdateGraph();
 		}
-
-		public void ToggleRecording()
-		{
-
-			if (!recording)
-			{
-				if (cleared)
-				{
-					_startTime = Time.time;
-					cleared = false;
-				}
-				recording = true;
-			}
-			else recording = false;
-		}
-
 
 
 		//public int Register(Data data)

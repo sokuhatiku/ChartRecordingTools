@@ -51,8 +51,12 @@ namespace GraphTool
 				if (prevPoint != null)
 				{
 					if (point.x > rect.xMax && prevPoint.Value.x > rect.xMax) continue;
-					else if ((point.x < rect.xMin && prevPoint.Value.x < rect.xMin)) break;
+					else if (point.x < rect.xMin && prevPoint.Value.x < rect.xMin) break;
 					else if (Mathf.Abs(prevPoint.Value.x - point.x) < 1f) continue;
+				}else
+				{
+					if (point.x > rect.xMax) continue;
+					else if (point.x < rect.xMin) break;
 				}
 
 				if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
