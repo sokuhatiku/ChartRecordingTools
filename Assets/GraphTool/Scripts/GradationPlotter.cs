@@ -24,6 +24,14 @@ namespace GraphTool
 		public float min = 0;
 		public float max = 100;
 
+#if UNITY_EDITOR
+		protected override void OnValidate()
+		{
+			if(min > max)
+				max = min;
+		}
+#endif
+
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
 #if UNITY_EDITOR
@@ -38,7 +46,7 @@ namespace GraphTool
 			var data = handler.GetDataEnumerator(dataKey);
 			var time = handler.GetDataEnumerator(GraphHandler.SYSKEY_TIMESTAMP);
 
-			var colorwidth = max - min;
+			var colorwidth = Mathf.Max(0, max - min);
 			float? prevTime = null;
 			var prevColor = defaultColor;
 			vh.Clear();
@@ -71,11 +79,13 @@ namespace GraphTool
 						break;
 					}
 				}
-				var color = data != null ?
-					(colorwidth > 0 ? 
-					colorKey.Evaluate((data.Current.Value + min) / (colorwidth)) :
-					colorKey.Evaluate(data.Current.Value > min ? 1 : 0)) : 
-					defaultColor;
+
+				var color = defaultColor;
+				if (data.Current != null) {
+					color = colorwidth > 0 ?
+						colorKey.Evaluate((Mathf.Clamp(data.Current.Value, min, max) - min) / (colorwidth)) :
+						colorKey.Evaluate(data.Current.Value > min ? 1 : 0);
+				}
 
 				if(prevColor == color)
 				{

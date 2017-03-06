@@ -664,7 +664,7 @@ MonoBehaviour:
   colorKey:
     key0:
       serializedVersion: 2
-      rgba: 16777215
+      rgba: 255
     key1:
       serializedVersion: 2
       rgba: 4278190335
