@@ -211,7 +211,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 313146680}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -234,8 +234,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afaacfc83c1fe4547848abe0f0e70553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_Material: {fileID: 597258193}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.578}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -243,8 +243,8 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   handler: {fileID: 1622823462}
-  GridRadius: 1
-  subGridRadius: 0.5
+  GridRadius: 4
+  subGridRadius: 1
   subGridColor: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!222 &313146683
 CanvasRenderer:
@@ -877,6 +877,38 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 534256478}
+--- !u!21 &597258193
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: GraphTool/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.578}
+    - first:
+        name: _Main
+      second: {r: 0.050847456, g: 0.08547009, b: 10.5, a: 7.5}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Sub
+      second: {r: 0.12711865, g: 0.042735044, b: 105, a: 15}
+    - first:
+        name: _SubColor
+      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &738543155
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,7 +1073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 0.19607843, g: 0.8455882, b: 0.25431034, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1386,7 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 0.8455882, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -2036,7 +2068,7 @@ MonoBehaviour:
   _scopeMargin: {x: 0, y: 0}
   _scopeUnsigned: 0
   _gridScale: {x: 1, y: 10}
-  _gridXSubdivision: 2
+  _gridXSubdivision: 10
   _gridYSubdivision: 2
   _gridXAutoScalingThreshold: 15
   _gridYAutoScalingThreshold: 20
@@ -2132,7 +2164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 0.3528566, g: 0.19607843, b: 0.8455882, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
