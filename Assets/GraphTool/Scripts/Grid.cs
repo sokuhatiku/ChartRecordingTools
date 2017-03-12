@@ -23,7 +23,7 @@ namespace GraphTool
 		public float subGridRadius = 0.5f;
 		public Color subGridColor = new Color(1,1,1,0.5f);
 
-		int sid_Color=0, sid_SubColor=0, sid_Offset=0, sid_Main=0, sid_Sub=0;
+		int sid_Color=0, sid_SubColor=0, sid_Offset=0, sid_Size=0, sid_Division=0;
 
 #if UNITY_EDITOR
 		protected override void OnValidate()
@@ -42,8 +42,8 @@ namespace GraphTool
 			sid_Color = Shader.PropertyToID("_Color");
 			sid_SubColor = Shader.PropertyToID("_SubColor");
 			sid_Offset = Shader.PropertyToID("_Offset");
-			sid_Main = Shader.PropertyToID("_Main");
-			sid_Sub = Shader.PropertyToID("_Sub");
+			sid_Size = Shader.PropertyToID("_Size");
+			sid_Division = Shader.PropertyToID("_Division");
 		}
 
 		protected override void UpdateGraph()
@@ -55,23 +55,27 @@ namespace GraphTool
 			var port = rectTransform.rect;
 			var offset = new Vector4(scope.x / scope.width, scope.y / scope.height, 0, 0);
 
-			var division = new Vector2(scope.size.x /  handler.GridScale.x, scope.size.y / handler.GridScale.y);
-			var subdivision = new Vector2(division.x * handler.GridSubdivisionX, division.y * handler.GridSubdivisionY);
+			var division = new Vector4(
+				scope.size.x /  handler.GridScale.x,
+				scope.size.y / handler.GridScale.y);
+			while (division.x > handler.GridAutoScalingThresholdX)
+				division.x /= handler.GridSubdivisionX;
+			while (division.y > handler.GridAutoScalingThresholdY)
+				division.y /= handler.GridSubdivisionY;
+			division.z = division.x * handler.GridSubdivisionX;
+			division.w = division.y * handler.GridSubdivisionY;
 
-			var main = new Vector4(
+			var size = new Vector4(
 				GridRadius * division.x / port.width,
 				GridRadius * division.y / port.height,
-				division.x, division.y);
-			var sub = new Vector4(
-				subGridRadius * subdivision.x / port.width, 
-				subGridRadius * subdivision.y  / port.height,
-				subdivision.x, subdivision.y);
+				subGridRadius * division.z / port.width,
+				subGridRadius * division.w / port.height);
 
 			material.SetVector(sid_Color, color);
 			material.SetVector(sid_SubColor, subGridColor);
 			material.SetVector(sid_Offset, offset);
-			material.SetVector(sid_Main, main);
-			material.SetVector(sid_Sub, sub);
+			material.SetVector(sid_Size, size);
+			material.SetVector(sid_Division, division);
 		}
 
 		//protected override void OnPopulateMesh(VertexHelper vh)
