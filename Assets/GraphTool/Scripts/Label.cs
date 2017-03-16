@@ -16,9 +16,13 @@ namespace GraphTool
 
 	public class Label : GraphPartsBase
 	{
-		const int generatorCreations = 16;
+		const int COUNT_GENERATORS = 16;
 		public bool direction;
 		public Font font;
+		public int fontSize = 14;
+		public float scaleFacter = 1f;
+		public TextAnchor anchor = TextAnchor.MiddleCenter;
+		public Vector2 textOffset = Vector2.zero;
 
 		public override Texture mainTexture
 		{
@@ -46,82 +50,82 @@ namespace GraphTool
 		{
 			if (handler == null || font == null) return;
 
-			if(generators.Count != handler.GridAutoScalingThresholdX + 2)
+			if(generators.Count != COUNT_GENERATORS)
 			{
-				while (generators.Count < handler.GridAutoScalingThresholdX + 2)
+				while (generators.Count < COUNT_GENERATORS)
 					generators.Add(new TextGenerator());
-				while (generators.Count > handler.GridAutoScalingThresholdX + 2)
+				while (generators.Count > COUNT_GENERATORS)
 					generators.RemoveAt(generators.Count - 1);
 			}
 
 			vh.Clear();
-			var gridSize = direction ?
-				handler.GridScale.x :
-				handler.GridScale.y;
-			if (gridSize < 0.01f) return;
+			var cellSize = direction ?
+				handler.GridCellSize.x :
+				handler.GridCellSize.y;
+			if (cellSize < 0.01f) return;
 
 			var subdivision = direction ?
 				handler.GridSubdivisionX :
 				handler.GridSubdivisionY;
 			if (subdivision < 1) return;
 
-			var width = direction ?
-				handler.ScopeRect.width :
-				handler.ScopeRect.height;
-
-			var start = direction ?
+			var scopeStart = direction ?
 				handler.ScopeRect.xMin :
 				handler.ScopeRect.yMin;
 
-			var draws = Mathf.CeilToInt(width / gridSize) +1;
-			while (draws > handler.GridAutoScalingThresholdX)
-			{ gridSize *= subdivision; draws = Mathf.CeilToInt(draws / subdivision); }
-			draws += 2;
+			var scopeEnd = direction ?
+				handler.ScopeRect.xMax :
+				handler.ScopeRect.yMax;
 
-			var startNum = Mathf.FloorToInt(start / gridSize);
-			var offset = -(start % gridSize);
-			if (offset > 0) offset -= gridSize; // Graph shape to "/|/|/|/|/|"
+			while((scopeEnd - scopeStart) / cellSize > generators.Count)
+			{
+				cellSize = cellSize * 2;
+			}
+
+			var countStart = Mathf.CeilToInt(scopeStart / cellSize);
+			var countEnd = Mathf.FloorToInt(scopeEnd / cellSize);
+
+			var draws = countEnd - countStart +1;
+			var offset = -(scopeStart % cellSize);
+			if (offset > 0) offset -= cellSize; // Graph shape to "/|/|/|/|/|"
 
 
 			// convert to rectTransform position
-			var tf_set = direction ?
-				ScopeToRectX(start + offset) :
-				ScopeToRectY(start + offset);
 			var tf_gain = direction ?
-				gridSize * scale.x :
-				gridSize * scale.y;
+				cellSize * scale.x :
+				cellSize * scale.y;
+			var tf_set = (direction ?
+				ScopeToRectX(scopeStart + offset) :
+				ScopeToRectY(scopeStart + offset))
+				+ tf_gain;
 
 			// draw
 			var setting = GetTextSetting();
-			var generatorID = 0;
-			for (int i = 0; i < draws; ++i)
+			font.RequestCharactersInTexture("1234567890-", setting.fontSize, setting.fontStyle);
+			var genCount = 0;
+			for (int i = 0; i < draws && genCount < generators.Count; i++)
 			{
-				var translated = direction ? new Vector3(tf_set + tf_gain * i, (-rectTransform.pivot.y + 0.5f) * rectTransform.rect.height) :
+				var translated = direction ? 
+					new Vector3(tf_set + tf_gain * i, (-rectTransform.pivot.y + 0.5f) * rectTransform.rect.height) :
 					new Vector3((-rectTransform.pivot.x + 0.5f) * rectTransform.rect.width, tf_set + tf_gain * i);
-				if (direction ?
-					translated.x < rectTransform.rect.xMin - 1 || rectTransform.rect.xMax + 1 < translated.x :
-					translated.y < rectTransform.rect.yMin - 1 || rectTransform.rect.yMax + 1 < translated.y) continue;
 
-				generators[generatorID].Populate((gridSize * (startNum + i)).ToString("#0.#"), setting);
-				IList<UIVertex> verts = generators[generatorID].verts;
+				generators[genCount].Populate((cellSize * (countStart + i)).ToString("#0.#"), setting);
+				IList<UIVertex> verts = generators[genCount].verts;
 
 				var vertexCount = verts.Count - 4;
 				for (int v = 0; v < vertexCount; ++v)
 				{
 					int tempVertsIndex = v & 3;
 					m_TempVerts[tempVertsIndex] = verts[v];
-					m_TempVerts[tempVertsIndex].position += translated;
+					m_TempVerts[tempVertsIndex].position += translated + (Vector3)textOffset;
 					if (tempVertsIndex == 3)
 						vh.AddUIVertexQuad(m_TempVerts);
 				}
-				generatorID++;
+				genCount++;
 			}
 
 		}
-
-		public int fontsize = 14;
-		public float scaleFacter = 1f;
-		public TextAnchor anchor = TextAnchor.MiddleCenter;
+		
 		TextGenerationSettings GetTextSetting()
 		{
 			var setting = new TextGenerationSettings();
@@ -129,24 +133,18 @@ namespace GraphTool
 			
 			setting.generationExtents = rectTransform.rect.size;
 			
-			if (font != null && font.dynamic)
-			{
-				setting.fontSize = fontsize;
-				setting.resizeTextMinSize = fontdata.minSize;
-				setting.resizeTextMaxSize = fontdata.maxSize;
-
-			}
+			setting.fontSize = fontSize;
 			setting.textAnchor = anchor;
 			setting.scaleFactor = scaleFacter;
 			setting.color = color;
 			setting.font = font;
 			setting.pivot = new Vector2(0.5f, 0.5f);
-			setting.richText = fontdata.richText;
-			setting.lineSpacing = fontdata.lineSpacing;
-			setting.fontStyle = fontdata.fontStyle;
-			setting.resizeTextForBestFit = fontdata.bestFit;
-			setting.horizontalOverflow = fontdata.horizontalOverflow;
-			setting.verticalOverflow = fontdata.verticalOverflow;
+			setting.richText = false;
+			setting.lineSpacing = 0;
+			setting.fontStyle = FontStyle.Normal;
+			setting.resizeTextForBestFit = false;
+			setting.horizontalOverflow = HorizontalWrapMode.Overflow;
+			setting.verticalOverflow = VerticalWrapMode.Overflow;
 
 			return setting;
 

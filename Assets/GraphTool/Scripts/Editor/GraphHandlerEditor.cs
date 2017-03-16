@@ -35,7 +35,6 @@ namespace GraphTool
 			EditorGUI.EndDisabledGroup();
 
 			serializedObject.Update();
-
 			GeneralEditor();
 			ScopeEditor();
 			GridEditor();
@@ -50,14 +49,13 @@ namespace GraphTool
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 
 			EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("recording"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoDetermine"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoScopeOffset"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("acceptUnregisteredKey"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_acceptData"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_autoDetermine"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_autoScopeOffset"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_acceptUnregisteredKey"));
 
 			EditorGUILayout.EndVertical();
 		}
-
 
 		void ScopeEditor()
 		{
@@ -66,8 +64,7 @@ namespace GraphTool
 
 			EditorGUILayout.LabelField("Scope", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeOffset"),new GUIContent("Offset"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeScale"), new GUIContent("Scale"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeMargin"), new GUIContent("Margin"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeSize"), new GUIContent("Size"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeUnsigned"), new GUIContent("Unsigned"));
 
 			EditorGUILayout.EndVertical();
@@ -78,16 +75,13 @@ namespace GraphTool
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 
 			EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridScale"), new GUIContent("Scale"));
-			intVector("Subdivision", serializedObject.FindProperty("_gridXSubdivision"), serializedObject.FindProperty("_gridYSubdivision"));
-
-			EditorGUILayout.LabelField("Auto Scaling", EditorStyles.boldLabel);
-			intVector("Threshold", serializedObject.FindProperty("_gridXAutoScalingThreshold"), serializedObject.FindProperty("_gridYAutoScalingThreshold"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_gridCellSize"), new GUIContent("CellSize"));
+			IntVector("Subdivision", serializedObject.FindProperty("_gridXSubdivision"), serializedObject.FindProperty("_gridYSubdivision"));
 
 			EditorGUILayout.EndVertical();
 		}
 
-		void intVector(string label, SerializedProperty x, SerializedProperty y)
+		void IntVector(string label, SerializedProperty x, SerializedProperty y)
 		{
 			var newDiv = EditorGUILayout.Vector2Field(label, new Vector2(x.intValue, y.intValue));
 			newDiv -= new Vector2(x.intValue, y.intValue);

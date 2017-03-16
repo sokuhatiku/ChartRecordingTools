@@ -29,43 +29,29 @@ namespace GraphTool
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
+			vh.Clear();
 #if UNITY_EDITOR
 			if (!UnityEditor.EditorApplication.isPlaying)
-			{
-				vh.Clear();
 				return;
-			}
 #endif
 			if (handler == null || dataKey == -1) return;
-
-			var data = handler.GetDataEnumerator(dataKey);
-			var time = handler.GetDataEnumerator(GraphHandler.SYSKEY_TIMESTAMP);
-
-			vh.Clear();
+			if (handler.InScopeFirstIndex == -1) return;
+			var data = handler.GetDataReader(dataKey);
+			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 			Vector2? prevPoint = null;
 			var rect = rectTransform.rect;
-			for (int i = 0; time.MoveNext() && data.MoveNext(); ++i)
+			for (int i = handler.InScopeFirstIndex; i < handler.InScopeLastIndex; ++i)
 			{
-				if (time.Current == null || data.Current == null) continue;
-				var point = ScopeToRect(new Vector2(time.Current.Value, data.Current.Value));
-				if (prevPoint != null)
-				{
-					if (point.x > rect.xMax && prevPoint.Value.x > rect.xMax) continue;
-					else if (point.x < rect.xMin && prevPoint.Value.x < rect.xMin) break;
-					else if (Mathf.Abs(prevPoint.Value.x - point.x) < 1f) continue;
-				}else
-				{
-					if (point.x > rect.xMax) continue;
-					else if (point.x < rect.xMin) break;
-				}
+				if (data[i] == null) continue;
+				var point = ScopeToRect(new Vector2(time[i].Value, data[i].Value));
 
 				if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
-				if (drawLine && prevPoint != null)	AddLine(vh, prevPoint.Value, point, lineRadius);
+				if (drawLine && prevPoint != null) AddLine(vh, prevPoint.Value, point, lineRadius);
 				prevPoint = point;
 			}
 		}
 
-		
+
 	}
 
 }

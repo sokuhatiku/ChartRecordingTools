@@ -25,44 +25,69 @@ namespace GraphTool
 			name = displayName;
 		}
 
-		public virtual float? GetCurrent()
-		{
-			return current;
-		}
-
-		public virtual float? GetLatest()
-		{
-			return latest;
-		}
-
-		public virtual void SetCurrent(float value)
+		public void SetCurrent(float value)
 		{
 			current = value;
-			latest = value;
 		}
 
-		public virtual void Determine()
+		public void Determine()
 		{
 			if(data == null) data = new List<float?>();
-			data.Insert(0, current);
+			data.Add(current);
+			if(current != null) latest = current;
 			current = null;
 		}
 
-		public virtual IEnumerator<float?> GetEnumerator()
-		{
-			return data.GetEnumerator();
-		}
-
-		public virtual int GetCount()
-		{
-			return data.Count;
-		}
-
-		public virtual void Clear()
+		public void Clear()
 		{
 			data.Clear();
 		}
-		
+
+
+		Reader _reader;
+		public Reader GetReader()
+		{
+			if (data == null) data = new List<float?>();
+			if (_reader == null) _reader = new Reader(this);
+			return _reader;
+		}
+
+
+		public class Reader
+		{
+			private Data data;
+
+			internal Reader(Data data)
+			{
+				this.data = data;
+			}
+
+			public float? CurrentValue
+			{
+				get { return data.current; }
+			}
+
+			public float? LatestValue
+			{
+				get { return data.latest; }
+			}
+
+			public int Count
+			{
+				get { return data.data.Count; }
+			}
+
+			public float? this[int index]
+			{
+				get { return data.data[index]; }
+			}
+
+			public IEnumerator<float?> GetEnumerator()
+			{
+				return data.data.GetEnumerator();
+			}
+
+		}
 	}
 
 }

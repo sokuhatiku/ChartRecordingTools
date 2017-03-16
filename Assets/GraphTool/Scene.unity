@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afaacfc83c1fe4547848abe0f0e70553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 763160933}
+  m_Material: {fileID: 1246056559}
   m_Color: {r: 1, g: 1, b: 1, a: 0.578}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -495,18 +495,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 464348097}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1622823462}
-        m_MethodName: ClearAll
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &464348097
@@ -630,14 +619,14 @@ RectTransform:
   m_GameObject: {fileID: 510256860}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0006231, y: 1.0006231, z: 1.0006231}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 760766073}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00053504854, y: 0.0008035898}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &510256862
@@ -670,7 +659,7 @@ MonoBehaviour:
       rgba: 4278190335
     key2:
       serializedVersion: 2
-      rgba: 4278190080
+      rgba: 0
     key3:
       serializedVersion: 2
       rgba: 0
@@ -696,7 +685,7 @@ MonoBehaviour:
     ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
@@ -705,9 +694,9 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  defaultColor: {r: 1, g: 1, b: 1, a: 0}
+  defaultColor: {r: 0, g: 0, b: 0, a: 0}
   min: 0
-  max: 10
+  max: 20
 --- !u!222 &510256863
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -868,9 +857,10 @@ MonoBehaviour:
   handler: {fileID: 1622823462}
   direction: 0
   font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  fontsize: 20
+  fontSize: 16
   scaleFacter: 1
-  anchor: 4
+  anchor: 5
+  textOffset: {x: -5, y: 0}
 --- !u!222 &534256481
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -995,38 +985,6 @@ MonoBehaviour:
   m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!21 &763160933
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: GraphTool/Grid
-  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats: []
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 0.578}
-    - first:
-        name: _Division
-      second: {r: 10.5, g: 7.5, b: 21, a: 15}
-    - first:
-        name: _Offset
-      second: {r: -1, g: -0.5, b: 0, a: 0}
-    - first:
-        name: _Size
-      second: {r: 0.050847456, g: 0.08547009, b: 0.025423728, a: 0.042735044}
-    - first:
-        name: _SubColor
-      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &866206647
 GameObject:
   m_ObjectHideFlags: 0
@@ -1073,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.8455882, b: 0.25431034, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1418,7 +1376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Material: {fileID: 0}
   m_Color: {r: 0.8455882, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1551,6 +1509,38 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1187475258}
+--- !u!21 &1246056559
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: GraphTool/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.578}
+    - first:
+        name: _Division
+      second: {r: 10.5, g: 7.5, b: 52.5, a: 37.5}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Size
+      second: {r: 0.05172414, g: 0.0955414, b: 0.06465517, a: 0.11942675}
+    - first:
+        name: _SubColor
+      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &1314293134
 GameObject:
   m_ObjectHideFlags: 0
@@ -1901,9 +1891,10 @@ MonoBehaviour:
   handler: {fileID: 1622823462}
   direction: 1
   font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  fontsize: 20
+  fontSize: 16
   scaleFacter: 1
   anchor: 4
+  textOffset: {x: 0, y: 0}
 --- !u!222 &1468089729
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1987,18 +1978,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1622823462}
-        m_MethodName: RecordToggle
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
@@ -2054,24 +2034,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0192a92327991d84bae2ce6cf0dfcafe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _acceptData: 1
+  _autoDetermine: 1
+  _autoScopeOffset: 1
+  _acceptUnregisteredKey: 0
+  _scopeOffset: {x: 0, y: 0}
+  _scopeSize: {x: 10.5, y: 75}
+  _scopeUnsigned: 0
+  _gridCellSize: {x: 1, y: 10}
+  _gridXSubdivision: 5
+  _gridYSubdivision: 5
   dataList:
   - name: Timestamp
   - name: X
   - name: Y
   - name: Z
-  recording: 1
-  autoDetermine: 1
-  autoScopeOffset: 1
-  acceptUnregisteredKey: 0
-  _scopeOffset: {x: 0, y: 0}
-  _scopeScale: {x: 10.5, y: 75}
-  _scopeMargin: {x: 0, y: 0}
-  _scopeUnsigned: 0
-  _gridScale: {x: 1, y: 10}
-  _gridXSubdivision: 2
-  _gridYSubdivision: 2
-  _gridXAutoScalingThreshold: 15
-  _gridYAutoScalingThreshold: 20
 --- !u!114 &1622823463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2164,7 +2141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f276a172ee8594eaf7714b7c0c5d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Material: {fileID: 0}
   m_Color: {r: 0.3528566, g: 0.19607843, b: 0.8455882, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:

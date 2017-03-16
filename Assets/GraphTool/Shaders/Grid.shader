@@ -1,11 +1,24 @@
-﻿Shader "GraphTool/Grid" {
-	Properties{
+﻿/**
+Graph Tool
+
+Copyright (c) 2017 Sokuhatiku
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
+
+
+Shader "GraphTool/Grid"
+{
+	Properties
+	{
 		_Color("Color", Color) = (1,1,1,1)
 		_SubColor("SubColor", Color) = (1,1,1,0.5)
 		_Offset("Offset", Vector) = (0,0,0,0)
 		_Size("Size", Vector) = (0.1,0.1,0.05,0.05)
 		_Division("Division", Vector) = (1,1,10,10)
 	}
+
 	SubShader
 	{
 		Tags

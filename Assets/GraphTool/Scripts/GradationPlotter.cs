@@ -27,10 +27,16 @@ namespace GraphTool
 #if UNITY_EDITOR
 		protected override void OnValidate()
 		{
-			if(min > max)
-				max = min;
+			if (min > max)
+				max = min = min + (max - min) / 2;
 		}
 #endif
+
+		protected override void OnEnable()
+		{
+			base.OnEnable();
+		}
+
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
@@ -43,8 +49,8 @@ namespace GraphTool
 #endif
 			if (handler == null || dataKey == -1) return;
 
-			var data = handler.GetDataEnumerator(dataKey);
-			var time = handler.GetDataEnumerator(GraphHandler.SYSKEY_TIMESTAMP);
+			var data = handler.GetDataReader(dataKey);
+			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
 			var colorwidth = Mathf.Max(0, max - min);
 			float? prevTime = null;
@@ -52,57 +58,39 @@ namespace GraphTool
 			vh.Clear();
 			var rect = rectTransform.rect;
 			var scope = handler.ScopeRect;
-			for (int i = 0; time.MoveNext() && data.MoveNext(); ++i)
+			if (handler.InScopeFirstIndex == -1)
+				return;
+			else
 			{
-				if (time.Current == null) continue;
-				else if(prevTime != null)
+				for (int i = handler.InScopeFirstIndex; i < handler.InScopeLastIndex ; ++i)
 				{
-					if (time.Current.Value > scope.xMax && prevTime.Value > scope.xMax)
+					var color = defaultColor;
+					if (data[i] != null)
 					{
-						prevTime = time.Current.Value;
+						color = colorwidth > 0 ?
+							colorKey.Evaluate((Mathf.Clamp(data[i].Value, min, max) - min) / (colorwidth)) :
+							colorKey.Evaluate(data[i].Value > min ? 1 : 0);
+					}
+
+					if (prevColor == color)
+					{
+						prevTime = time[i].Value;
 						continue;
 					}
-					else if (time.Current.Value < scope.xMin && prevTime.Value < scope.xMin)
+					else
 					{
-						AddGradationVert(vh, prevTime.Value, prevColor);
-						break;
+						if (prevTime != null)
+						{
+							AddGradationVert(vh, prevTime.Value, prevColor);
+							prevTime = null;
+						}
 					}
-				}else
-				{
-					if (time.Current.Value > scope.xMax)
-					{
-						prevTime = time.Current.Value;
-						continue;
-					}
-					else if (time.Current.Value < scope.xMin )
-					{
-						break;
-					}
-				}
 
-				var color = defaultColor;
-				if (data.Current != null) {
-					color = colorwidth > 0 ?
-						colorKey.Evaluate((Mathf.Clamp(data.Current.Value, min, max) - min) / (colorwidth)) :
-						colorKey.Evaluate(data.Current.Value > min ? 1 : 0);
+					AddGradationVert(vh, time[i].Value, color);
+					prevColor = color;
 				}
-
-				if(prevColor == color)
-				{
-					prevTime = time.Current.Value;
-					continue;
-				}
-				else
-				{
-					if(prevTime != null)
-					{
-						AddGradationVert(vh, prevTime.Value, prevColor);
-						prevTime = null;
-					}
-				}
-
-				AddGradationVert(vh, time.Current.Value, color);
-				prevColor = color;
+				if (prevTime != null)
+					AddGradationVert(vh, handler.ScopeRect.xMax, prevColor);
 			}
 		}
 
@@ -114,8 +102,8 @@ namespace GraphTool
 			if (vh.currentVertCount > 2)
 			{
 				var cnt = vh.currentVertCount - 1;
-				vh.AddTriangle(cnt - 1, cnt - 2, cnt - 3);
-				vh.AddTriangle(cnt - 2, cnt - 1, cnt);
+				vh.AddTriangle(cnt - 3, cnt - 2, cnt - 1);
+				vh.AddTriangle(cnt , cnt - 1, cnt - 2);
 			}
 		}
 	}
