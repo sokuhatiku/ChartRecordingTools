@@ -23,6 +23,7 @@ namespace GraphTool
 		public Color defaultColor;
 		public float min = 0;
 		public float max = 100;
+		public int drawsLimit = 100;
 
 #if UNITY_EDITOR
 		protected override void OnValidate()
@@ -40,41 +41,48 @@ namespace GraphTool
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
-#if UNITY_EDITOR
-			if (!UnityEditor.EditorApplication.isPlaying)
-			{
-				vh.Clear();
-				return;
-			}
-#endif
-			if (handler == null || dataKey == -1) return;
-
+			vh.Clear();
+			if (handler == null || dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
+			if (handler.InScopeFirstIndex == -1) return;
 			var data = handler.GetDataReader(dataKey);
 			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
-			var colorwidth = Mathf.Max(0, max - min);
+			var first = handler.InScopeFirstIndex;
+			var last = handler.InScopeLastIndex;
+			for (; last < data.Count && data[last] == null; ++last) { }
+			if (last == data.Count - 1 && data[last] == null)
+				last = handler.InScopeLastIndex;
+
+			var draws = last - first;
+			var skip = draws > drawsLimit ? Mathf.CeilToInt(draws / drawsLimit) : 1;
+			first -= first % skip;
+
+			int i = first;
 			float? prevTime = null;
 			var prevColor = defaultColor;
-			vh.Clear();
-			var rect = rectTransform.rect;
-			var scope = handler.ScopeRect;
-			if (handler.InScopeFirstIndex == -1)
-				return;
-			else
+			if (skip > 1)
 			{
-				for (int i = handler.InScopeFirstIndex; i < handler.InScopeLastIndex ; ++i)
+				for (; i+skip<data.Count-1 && i <= last+skip; i+=skip)
 				{
-					var color = defaultColor;
-					if (data[i] != null)
+					float timeave = 0f;
+					float dataave = 0f;
+					int datacnt = 0;
+					for (int j = i; i-skip < j && 0 <= j; --j)
 					{
-						color = colorwidth > 0 ?
-							colorKey.Evaluate((Mathf.Clamp(data[i].Value, min, max) - min) / (colorwidth)) :
-							colorKey.Evaluate(data[i].Value > min ? 1 : 0);
+						if (data[j] != null)
+						{
+							dataave += data[j].Value;
+							timeave += time[j].Value;
+							++datacnt;
+						}
 					}
+
+					timeave /= datacnt;
+					var color = GetColor(datacnt > 0 ? dataave / datacnt : (float?)null);
 
 					if (prevColor == color)
 					{
-						prevTime = time[i].Value;
+						prevTime = timeave;
 						continue;
 					}
 					else
@@ -86,12 +94,42 @@ namespace GraphTool
 						}
 					}
 
-					AddGradationVert(vh, time[i].Value, color);
+					AddGradationVert(vh, timeave, color);
 					prevColor = color;
 				}
-				if (prevTime != null)
-					AddGradationVert(vh, handler.ScopeRect.xMax, prevColor);
 			}
+
+			for (; i <= handler.InScopeLastIndex; ++i)
+			{
+				var color = GetColor(data[i]);
+
+				if (prevColor == color)
+				{
+					prevTime = time[i].Value;
+					continue;
+				}
+				else if (prevTime != null)
+				{ 
+					AddGradationVert(vh, prevTime.Value, prevColor);
+					prevTime = null;
+				}
+
+				AddGradationVert(vh, time[i].Value, color);
+				prevColor = color;
+			}
+
+			if (prevTime != null)
+				AddGradationVert(vh, Mathf.Min(time.LatestValue.Value, handler.ScopeRect.xMax), prevColor);
+		}
+
+		Color GetColor(float? data)
+		{
+			var gradWidth = Mathf.Max(0, max - min);
+			if(data != null)
+				return gradWidth > 0 ?
+					colorKey.Evaluate((Mathf.Clamp(data.Value, min, max) - min) / (gradWidth)) :
+					colorKey.Evaluate(data.Value > min ? 1 : 0);
+			return defaultColor;
 		}
 
 		void AddGradationVert(VertexHelper vh, float time, Color color)
@@ -103,7 +141,7 @@ namespace GraphTool
 			{
 				var cnt = vh.currentVertCount - 1;
 				vh.AddTriangle(cnt - 3, cnt - 2, cnt - 1);
-				vh.AddTriangle(cnt , cnt - 1, cnt - 2);
+				vh.AddTriangle(cnt, cnt - 1, cnt - 2);
 			}
 		}
 	}

@@ -25,33 +25,65 @@ namespace GraphTool
 		public bool drawLine = true;
 		public float lineRadius = 0.25f;
 		public float skipDrawAngle = 0.25f;
-
+		public int drawsLimit = 100;
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
 			vh.Clear();
-#if UNITY_EDITOR
-			if (!UnityEditor.EditorApplication.isPlaying)
-				return;
-#endif
-			if (handler == null || dataKey == -1) return;
+			if (handler == null || dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
 			if (handler.InScopeFirstIndex == -1) return;
 			var data = handler.GetDataReader(dataKey);
 			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
+
+			var first = handler.InScopeFirstIndex;
+			var last = handler.InScopeLastIndex;
+			for(; last < data.Count && data[last] == null ; ++last){}
+			if (last == data.Count - 1 && data[last] == null)
+				last = handler.InScopeLastIndex;
+
+			var draws = last - first;
+			var skip = draws > drawsLimit ? Mathf.CeilToInt(draws / drawsLimit) : 1;
+			first -= first % skip;
+
+			int i = first;
 			Vector2? prevPoint = null;
-			var rect = rectTransform.rect;
-			for (int i = handler.InScopeFirstIndex; i < handler.InScopeLastIndex; ++i)
+			if (skip > 1)
+			{
+				for (; i+skip < data.Count-1 && i<=last+skip; i += skip)
+				{
+					float timeave = 0f;
+					float dataave = 0f;
+					int datacnt = 0;
+					for(int j=i; i-skip < j && 0 <= j; --j)
+					{
+						if (data[j] != null)
+						{
+							dataave += data[j].Value;
+							timeave += time[j].Value;
+							++datacnt;
+						}
+					}
+					if (datacnt == 0) continue;
+
+					Plot(vh, timeave / datacnt, dataave / datacnt, ref prevPoint);
+				}
+			}
+			
+			for (; i < data.Count && i <= last; ++i)
 			{
 				if (data[i] == null) continue;
-				var point = ScopeToRect(new Vector2(time[i].Value, data[i].Value));
-
-				if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
-				if (drawLine && prevPoint != null) AddLine(vh, prevPoint.Value, point, lineRadius);
-				prevPoint = point;
+				Plot(vh, time[i].Value, data[i].Value, ref prevPoint);
 			}
 		}
 
+		void Plot(VertexHelper vh, float time, float data, ref Vector2? prevPoint)
+		{
+			var point = ScopeToRect(new Vector2(time, data));
+
+			if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
+			if (drawLine && prevPoint != null) AddLine(vh, prevPoint.Value, point, lineRadius);
+			prevPoint = point;
+		}
 
 	}
-
 }
