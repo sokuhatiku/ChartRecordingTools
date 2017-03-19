@@ -77,6 +77,7 @@ namespace GraphTool
 		SerializedObject handler;
 		SerializedProperty self;
 		ReorderableList dataList;
+		bool closeRequest = false;
 
 		public static void Create(SerializedObject handler, SerializedProperty self, Rect buttonRect)
 		{
@@ -95,7 +96,7 @@ namespace GraphTool
 
 		private void Update()
 		{
-			if (focusedWindow != this)
+			if (focusedWindow != this || closeRequest)
 			{
 				Close();
 			}
@@ -119,6 +120,7 @@ namespace GraphTool
 			handler.Update();
 
 			scroll = EditorGUILayout.BeginScrollView(scroll, GUI.skin.box);
+			try
 			{
 				EditorGUILayout.LabelField("DataKey Editor", EditorStyles.boldLabel);
 				EditorGUI.BeginDisabledGroup(true);
@@ -132,10 +134,18 @@ namespace GraphTool
 				minSize = new Vector2(WINDOW_WIDTH, height);
 				maxSize = new Vector2(WINDOW_WIDTH, height);
 			}
-			EditorGUILayout.EndScrollView();
-			
-			handler.ApplyModifiedProperties();
+			catch (System.NullReferenceException e)
+			{
+				if (e.Message.Contains("SerializedObject has been Disposed"))
+					closeRequest = true;
+				else throw e;
+			}
+			finally
+			{
+				EditorGUILayout.EndScrollView();
+			}
 
+			handler.ApplyModifiedProperties();
 			
 		}
 
