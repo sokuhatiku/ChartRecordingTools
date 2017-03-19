@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afaacfc83c1fe4547848abe0f0e70553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1810133875}
+  m_Material: {fileID: 1183946773}
   m_Color: {r: 1, g: 1, b: 1, a: 0.578}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -697,6 +697,8 @@ MonoBehaviour:
   defaultColor: {r: 0, g: 0, b: 0, a: 0}
   min: 0
   max: 20
+  drawsLimit: 100
+  freshDataProtection: 10
 --- !u!222 &510256863
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -878,7 +880,7 @@ GameObject:
   - component: {fileID: 738543158}
   - component: {fileID: 738543157}
   m_Layer: 5
-  m_Name: BG
+  m_Name: bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1046,7 +1048,9 @@ MonoBehaviour:
   dotFloating: 0
   drawLine: 1
   lineRadius: 2
-  skipDrawAngle: 0.25
+  CutoffDatalessFrame: 1
+  drawsLimit: 100
+  freshDataProtection: 10
 --- !u!222 &866206650
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1391,13 +1395,47 @@ MonoBehaviour:
   dotFloating: 0
   drawLine: 1
   lineRadius: 2
-  skipDrawAngle: 0.25
+  CutoffDatalessFrame: 1
+  drawsLimit: 100
+  freshDataProtection: 10
 --- !u!222 &1155832746
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1155832743}
+--- !u!21 &1183946773
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: GraphTool/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.578}
+    - first:
+        name: _Division
+      second: {r: 10.5, g: 7.5, b: 52.5, a: 37.5}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Size
+      second: {r: 0.02586207, g: 0.0477707, b: 0.06465517, a: 0.11942675}
+    - first:
+        name: _SubColor
+      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &1187475258
 GameObject:
   m_ObjectHideFlags: 0
@@ -1963,7 +2001,7 @@ GameObject:
   - component: {fileID: 1622823463}
   - component: {fileID: 1622823464}
   m_Layer: 5
-  m_Name: GraphBoard
+  m_Name: '[GraphBoard]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2124,7 +2162,9 @@ MonoBehaviour:
   dotFloating: 0
   drawLine: 1
   lineRadius: 2
-  skipDrawAngle: 0.25
+  CutoffDatalessFrame: 1
+  drawsLimit: 100
+  freshDataProtection: 10
 --- !u!222 &1675802637
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2190,38 +2230,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
---- !u!21 &1810133875
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: GraphTool/Grid
-  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats: []
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 0.578}
-    - first:
-        name: _Division
-      second: {r: 10.5, g: 7.5, b: 52.5, a: 37.5}
-    - first:
-        name: _Offset
-      second: {r: -1, g: -0.5, b: 0, a: 0}
-    - first:
-        name: _Size
-      second: {r: 0.02586207, g: 0.0477707, b: 0.06465517, a: 0.11942675}
-    - first:
-        name: _SubColor
-      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &2113621996
 GameObject:
   m_ObjectHideFlags: 0

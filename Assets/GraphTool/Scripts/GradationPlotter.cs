@@ -23,7 +23,11 @@ namespace GraphTool
 		public Color defaultColor;
 		public float min = 0;
 		public float max = 100;
+
+		[Range(10, 2000), Header("Load reduction")]
 		public int drawsLimit = 100;
+		[Range(0, 500)]
+		public int freshDataProtection = 10;
 
 #if UNITY_EDITOR
 		protected override void OnValidate()
@@ -62,7 +66,7 @@ namespace GraphTool
 			var prevColor = defaultColor;
 			if (skip > 1)
 			{
-				for (; i+skip<data.Count-1 && i <= last+skip; i+=skip)
+				for (; i+freshDataProtection<data.Count && i <= last+skip; i+=skip)
 				{
 					float timeave = 0f;
 					float dataave = 0f;

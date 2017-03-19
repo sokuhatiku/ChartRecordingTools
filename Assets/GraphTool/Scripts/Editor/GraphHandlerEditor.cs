@@ -8,6 +8,7 @@ http://opensource.org/licenses/mit-license.php
 */
 
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditorInternal;
 
@@ -158,6 +159,6 @@ namespace GraphTool
 			return dataList;
 		}
 
-	}
 
+	}
 }

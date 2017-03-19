@@ -313,7 +313,7 @@ namespace GraphTool
 		}
 
 		#endregion
-		
-	}
 
+
+	}
 }
