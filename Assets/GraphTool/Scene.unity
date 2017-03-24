@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afaacfc83c1fe4547848abe0f0e70553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1183946773}
+  m_Material: {fileID: 905403953}
   m_Color: {r: 1, g: 1, b: 1, a: 0.578}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -315,7 +315,7 @@ Canvas:
   m_GameObject: {fileID: 325958790}
   m_Enabled: 1
   serializedVersion: 2
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_Camera: {fileID: 1399738313}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
@@ -332,20 +332,20 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 325958790}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.14487904, z: -0, w: 0.9894494}
+  m_LocalPosition: {x: 0, y: 0, z: -0.108}
+  m_LocalScale: {x: 0.0029531983, y: 0.0029531983, z: 0.0029531983}
   m_Children:
   - {fileID: 1622823461}
   - {fileID: 1699382390}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 24.689001, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -16.661001, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.729, y: -0.511}
+  m_SizeDelta: {x: 384.36, y: 281.136}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &440550772
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,10 +452,10 @@ RectTransform:
   m_Father: {fileID: 1699382390}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 276.33334, y: -25}
+  m_SizeDelta: {x: 276.33334, y: 25}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &464348096
 MonoBehaviour:
@@ -743,7 +743,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 516323171}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_MotionVectors: 1
@@ -813,7 +813,7 @@ GameObject:
   - component: {fileID: 534256481}
   - component: {fileID: 534256480}
   m_Layer: 5
-  m_Name: YLabel
+  m_Name: Y Axis Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -880,7 +880,7 @@ GameObject:
   - component: {fileID: 738543158}
   - component: {fileID: 738543157}
   m_Layer: 5
-  m_Name: bg
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -893,7 +893,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 738543155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1622823461}
@@ -916,7 +916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.607}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -982,7 +982,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 760766072}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -998,12 +998,12 @@ GameObject:
   - component: {fileID: 866206650}
   - component: {fileID: 866206649}
   m_Layer: 5
-  m_Name: PlotterY
+  m_Name: Plotter_Y
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &866206648
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1051,12 +1051,47 @@ MonoBehaviour:
   CutoffDatalessFrame: 1
   drawsLimit: 100
   freshDataProtection: 10
+  vertexhelper: 1
+  computebuffer: 1
+  CB_Scale: 1
 --- !u!222 &866206650
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 866206647}
+--- !u!21 &905403953
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: GraphTool/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.578}
+    - first:
+        name: _Division
+      second: {r: 10.5, g: 7, b: 52.5, a: 35}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Size
+      second: {r: 0.06280656, g: 0.06791633, b: 0.1570164, a: 0.16979083}
+    - first:
+        name: _SubColor
+      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &913258896
 GameObject:
   m_ObjectHideFlags: 0
@@ -1345,7 +1380,7 @@ GameObject:
   - component: {fileID: 1155832746}
   - component: {fileID: 1155832745}
   m_Layer: 5
-  m_Name: PlotterX
+  m_Name: Plotter_X
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1390,52 +1425,23 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   handler: {fileID: 1622823462}
   dataKey: 1
-  drawDot: 0
-  dotRadius: 4
+  drawDot: 1
+  dotRadius: 15
   dotFloating: 0
   drawLine: 1
-  lineRadius: 2
+  lineRadius: 5
   CutoffDatalessFrame: 1
-  drawsLimit: 100
+  drawsLimit: 1000
   freshDataProtection: 10
+  vertexhelper: 1
+  computebuffer: 1
+  CB_Scale: 10
 --- !u!222 &1155832746
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1155832743}
---- !u!21 &1183946773
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: GraphTool/Grid
-  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats: []
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 0.578}
-    - first:
-        name: _Division
-      second: {r: 10.5, g: 7.5, b: 52.5, a: 37.5}
-    - first:
-        name: _Offset
-      second: {r: -1, g: -0.5, b: 0, a: 0}
-    - first:
-        name: _Size
-      second: {r: 0.02586207, g: 0.0477707, b: 0.06465517, a: 0.11942675}
-    - first:
-        name: _SubColor
-      second: {r: 0, g: 0.75172424, b: 1, a: 0.19607843}
 --- !u!1 &1187475258
 GameObject:
   m_ObjectHideFlags: 0
@@ -1468,10 +1474,10 @@ RectTransform:
   m_Father: {fileID: 1699382390}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 700.8334, y: -12.5}
+  m_SizeDelta: {x: 276.33334, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1187475260
 MonoBehaviour:
@@ -1772,7 +1778,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1399738309}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -30}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1851,7 +1857,7 @@ GameObject:
   - component: {fileID: 1468089729}
   - component: {fileID: 1468089728}
   m_Layer: 5
-  m_Name: XLabel
+  m_Name: X Axis Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1938,10 +1944,10 @@ RectTransform:
   m_Father: {fileID: 1699382390}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 133.16667, y: -12.5}
+  m_SizeDelta: {x: 266.33334, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1606999023
 MonoBehaviour:
@@ -2042,19 +2048,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _acceptData: 1
   _autoDetermine: 1
-  _autoScopeOffset: 1
   _acceptUnregisteredKey: 0
-  _scopeOffset: {x: 0, y: 0}
-  _scopeSize: {x: 10.5, y: 75}
-  _scopeUnsigned: 0
-  _gridCellSize: {x: 1, y: 10}
-  _gridXSubdivision: 5
-  _gridYSubdivision: 5
   dataList:
   - name: Timestamp
   - name: X
   - name: Y
   - name: Z
+  scopeOffset: {x: 0, y: 0}
+  scopeSize: {x: 10.5, y: 70}
+  scopeUnsigned: 0
+  scopeFollowLatest: 1
+  _gridCellSize: {x: 1, y: 10}
+  _gridXSubdivision: 5
+  _gridYSubdivision: 5
 --- !u!114 &1622823463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2077,7 +2083,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1622823460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -2112,12 +2118,12 @@ GameObject:
   - component: {fileID: 1675802637}
   - component: {fileID: 1675802636}
   m_Layer: 5
-  m_Name: PlotterZ
+  m_Name: Plotter_Z
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1675802635
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2165,6 +2171,9 @@ MonoBehaviour:
   CutoffDatalessFrame: 1
   drawsLimit: 100
   freshDataProtection: 10
+  vertexhelper: 1
+  computebuffer: 1
+  CB_Scale: 1
 --- !u!222 &1675802637
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2181,12 +2190,12 @@ GameObject:
   - component: {fileID: 1699382390}
   - component: {fileID: 1699382391}
   m_Layer: 5
-  m_Name: ControllArea
+  m_Name: Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1699382390
 RectTransform:
   m_ObjectHideFlags: 0

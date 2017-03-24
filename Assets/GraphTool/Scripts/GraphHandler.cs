@@ -16,7 +16,7 @@ namespace GraphTool
 	[ExecuteInEditMode]
 	public class GraphHandler : MonoBehaviour
 	{
-
+		
 		#region Constant
 
 		const float DENOMINATOR_MIN = 0.01f;
@@ -25,106 +25,18 @@ namespace GraphTool
 
 		#endregion
 
-		
 
-		#region Parameter
+		#region Data
 
-		// General
 		[SerializeField] protected bool _acceptData = true;
 		[SerializeField] protected bool _autoDetermine = true;
-		[SerializeField] protected bool _autoScopeOffset = true;
 		[SerializeField] protected bool _acceptUnregisteredKey = false;
-
-		// Scope
-		[SerializeField] protected Vector2 _scopeOffset = new Vector2(0, 0);
-		[SerializeField] protected Vector2 _scopeSize = new Vector2(5f, 200f);
-		[SerializeField] protected bool _scopeUnsigned = false;
-
-		// Grid
-		[SerializeField] protected Vector2 _gridCellSize = new Vector2(1, 10);
-		public Vector2 GridCellSize
-		{
-			get { return _gridCellSize; }
-			set { _gridCellSize = new Vector2(Mathf.Max(value.x, DENOMINATOR_MIN), Mathf.Max(value.y, DENOMINATOR_MIN)); }
-		}
-		[SerializeField] protected int _gridXSubdivision = 10;
-		public int GridSubdivisionX
-		{
-			get { return _gridXSubdivision; }
-			set { _gridXSubdivision = Mathf.Max(value, 1); }
-		}
-		[SerializeField] protected int _gridYSubdivision = 10;
-		public int GridSubdivisionY
-		{
-			get { return _gridYSubdivision; }
-			set { _gridYSubdivision = Mathf.Max(value, 1); }
-		}
-
-
-		private void OnValidate()
-		{
-			_scopeSize = new Vector2(
-				_scopeSize.x < DENOMINATOR_MIN ? DENOMINATOR_MIN : _scopeSize.x,
-				_scopeSize.y < DENOMINATOR_MIN ? DENOMINATOR_MIN : _scopeSize.y);
-
-			_gridCellSize = new Vector2(
-				_gridCellSize.x < DENOMINATOR_MIN ? DENOMINATOR_MIN : _gridCellSize.x,
-				_gridCellSize.y < DENOMINATOR_MIN ? DENOMINATOR_MIN : _gridCellSize.y);
-			_gridXSubdivision = Mathf.Max(_gridXSubdivision, 1);
-			_gridYSubdivision = Mathf.Max(_gridYSubdivision, 1);
-
-			UpdateGraph();
-		}
-
-		#endregion
-
-
-
-		#region Core Logic
 
 		float startTime = 0f;
 		bool dataAccepted = false;
 
 		[SerializeField, HideInInspector]
 		List<Data> dataList = new List<Data>();
-
-		private void Reset()
-		{
-			RegisterInternal(SYSKEY_TIMESTAMP, new Data("Timestamp"));
-		}
-
-		private void OnRectTransformDimensionsChange()
-		{
-			UpdateGraph();
-		}
-
-		private void Start()
-		{
-			UpdateGraph();
-		}
-
-		private void LateUpdate()
-		{
-#if UNITY_EDITOR
-			if (!UnityEditor.EditorApplication.isPlaying) return;
-#endif
-			if (_autoDetermine && dataAccepted) Determine();
-		}
-		public void UpdateGraph()
-		{
-			// Update Scope
-			if (_autoScopeOffset)
-				_scopeOffset.x = GetLatestValue(SYSKEY_TIMESTAMP) ?? 0f;
-			_scopeRect = new Rect(_scopeOffset, _scopeSize);
-			_scopeRect.x -= _scopeSize.x;
-			if (!_scopeUnsigned) _scopeRect.y -= _scopeSize.y / 2;
-
-			// Update InScopeIndex
-			UpdateIndexSamples();
-
-			if (OnUpdateGraph != null)
-				OnUpdateGraph();
-		}
 
 		public void Determine()
 		{
@@ -139,7 +51,7 @@ namespace GraphTool
 			foreach (var data in dataList)
 				data.Clear();
 			startTime = Time.time;
-			_scopeOffset.x = 0;
+			scopeOffset.x = 0;
 			UpdateGraph();
 		}
 
@@ -148,12 +60,6 @@ namespace GraphTool
 			if (dataKey >= dataList.Count) dataList.Insert(dataKey, data);
 			else dataList[dataKey] = data;
 		}
-
-		#endregion
-
-
-
-		#region For Data Provider
 
 		public bool IsKeyValid(int dataKey)
 		{
@@ -195,18 +101,108 @@ namespace GraphTool
 			dataAccepted = true;
 		}
 
+		public Data.Reader GetDataReader(int dataKey)
+		{
+			if (!IsKeyValid(dataKey))
+			{
+				if (dataKey >= 0 && _acceptUnregisteredKey)
+					RegisterInternal(dataKey, new Data("data " + dataKey));
+				else throw new ArgumentException("Data does not exist at specified key.", "dataKey");
+			}
+
+			return dataList[dataKey].GetReader();
+		}
+
 		#endregion
 
 
+		#region Scope
 
-		#region For Renderer Components
+		[SerializeField] protected Vector2 scopeOffset = new Vector2(0, 0);
+		[SerializeField] protected Vector2 scopeSize = new Vector2(5f, 200f);
+		[SerializeField] protected bool scopeUnsigned = false;
+		[SerializeField] protected bool scopeFollowLatest = true;
+
+		private Rect _scopeRect;
+		public Rect ScopeRect
+		{
+			get { return _scopeRect; }
+			set
+			{
+				if (_scopeRect != value)
+				{
+					_scopeRect = value;
+					UpdateGraph();
+				}
+			}
+		}
+
+		void UpdateScopeFromProperty()
+		{
+			if (scopeFollowLatest)
+				scopeOffset.x = GetLatestValue(SYSKEY_TIMESTAMP) ?? 0f;
+			_scopeRect = new Rect(scopeOffset, scopeSize);
+			_scopeRect.x -= scopeSize.x;
+			if (!scopeUnsigned) _scopeRect.y -= scopeSize.y / 2;
+		}
+
+		#endregion
+
+
+		#region Grid
+
+		[SerializeField] protected Vector2 _gridCellSize = new Vector2(1, 10);
+		public Vector2 GridCellSize
+		{
+			get { return _gridCellSize; }
+			set
+			{
+				_gridCellSize = new Vector2(
+					Mathf.Max(value.x, DENOMINATOR_MIN),
+					Mathf.Max(value.y, DENOMINATOR_MIN));
+			}
+		}
+
+		[SerializeField] protected int _gridXSubdivision = 10;
+		public int GridSubdivisionX
+		{
+			get { return _gridXSubdivision; }
+			set { _gridXSubdivision = Mathf.Max(value, 1); }
+		}
+
+		[SerializeField] protected int _gridYSubdivision = 10;
+		public int GridSubdivisionY
+		{
+			get { return _gridYSubdivision; }
+			set { _gridYSubdivision = Mathf.Max(value, 1); }
+		}
+
+		void GridParameterCheck()
+		{
+			scopeSize = new Vector2(
+				scopeSize.x < DENOMINATOR_MIN ? DENOMINATOR_MIN : scopeSize.x,
+				scopeSize.y < DENOMINATOR_MIN ? DENOMINATOR_MIN : scopeSize.y);
+
+			_gridCellSize = new Vector2(
+				_gridCellSize.x < DENOMINATOR_MIN ? DENOMINATOR_MIN : _gridCellSize.x,
+				_gridCellSize.y < DENOMINATOR_MIN ? DENOMINATOR_MIN : _gridCellSize.y);
+
+			_gridXSubdivision = Mathf.Max(_gridXSubdivision, 1);
+			_gridYSubdivision = Mathf.Max(_gridYSubdivision, 1);
+		}
+
+		#endregion
+
+
+		#region IndexRange
 
 		protected int _inScopeFirstIndex = -1;
-		protected int _inScopeLastIndex = -1;
 		public int InScopeFirstIndex { get { return _inScopeFirstIndex; } }
+
+		protected int _inScopeLastIndex = -1;
 		public int InScopeLastIndex { get { return _inScopeLastIndex; } }
 
-		protected void UpdateIndexSamples()
+		protected void UpdateIndexRange()
 		{
 			var time = GetDataReader(SYSKEY_TIMESTAMP);
 			_inScopeFirstIndex = _inScopeLastIndex = -1;
@@ -256,8 +252,8 @@ namespace GraphTool
 						}
 					}
 				}
-				if ( time[time.Count -1].Value <= ScopeRect.xMax)
-					_inScopeLastIndex = time.Count -1;
+				if (time[time.Count - 1].Value <= ScopeRect.xMax)
+					_inScopeLastIndex = time.Count - 1;
 				else
 				{
 					for (int i = 0; i < time.Count; i++)
@@ -284,36 +280,61 @@ namespace GraphTool
 			}
 		}
 
-		private Rect _scopeRect;
-		public Rect ScopeRect
-		{
-			get { return _scopeRect; }
-			set
-			{
-				if (_scopeRect != value)
-				{
-					_scopeRect = value;
-					UpdateGraph();
-				}
-			}
-		}
+		#endregion
+
+
+		#region UpdateGraph
 
 		public Action OnUpdateGraph;
 
-		public Data.Reader GetDataReader(int dataKey)
+		public void UpdateGraph()
 		{
-			if (!IsKeyValid(dataKey))
-			{
-				if (dataKey >= 0 && _acceptUnregisteredKey)
-					RegisterInternal(dataKey, new Data("data " + dataKey));
-				else throw new ArgumentException("Data does not exist at specified key.", "dataKey");
-			}
+			UpdateScopeFromProperty();
+			UpdateIndexRange();
 
-			return dataList[dataKey].GetReader();
+			if (OnUpdateGraph != null)
+				OnUpdateGraph();
 		}
 
 		#endregion
 
+
+		#region UnityMessages
+
+		private void Reset()
+		{
+			RegisterInternal(SYSKEY_TIMESTAMP, new Data("Timestamp"));
+		}
+
+		private void Start()
+		{
+			UpdateGraph();
+		}
+
+		private void LateUpdate()
+		{
+
+#if UNITY_EDITOR
+			if (!UnityEditor.EditorApplication.isPlaying)
+				return;
+#endif
+
+			if (_autoDetermine && dataAccepted)
+				Determine();
+		}
+
+		private void OnRectTransformDimensionsChange()
+		{
+			UpdateGraph();
+		}
+
+		private void OnValidate()
+		{
+			GridParameterCheck();
+			UpdateGraph();
+		}
+
+		#endregion
 
 	}
 }

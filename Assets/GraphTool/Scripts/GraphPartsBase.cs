@@ -34,8 +34,11 @@ namespace GraphTool
 		{
 			base.OnEnable();
 			handler = GetComponentInParent<GraphHandler>();
-			if(handler != null)
+			if (handler != null)
+			{
 				handler.OnUpdateGraph += UpdateGraph;
+				RecalculateScale();
+			}
 		}
 
 		protected override void OnDisable()

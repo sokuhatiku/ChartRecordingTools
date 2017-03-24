@@ -18,8 +18,6 @@ namespace GraphTool
 	public class Grid : GraphPartsBase
 	{
 		public float GridRadius = 1f;
-
-		[Space]
 		public float subGridRadius = 0.5f;
 		public Color subGridColor = new Color(1,1,1,0.5f);
 

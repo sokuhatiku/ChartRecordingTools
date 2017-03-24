@@ -52,7 +52,6 @@ namespace GraphTool
 			EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_acceptData"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_autoDetermine"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_autoScopeOffset"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("_acceptUnregisteredKey"));
 
 			EditorGUILayout.EndVertical();
@@ -64,9 +63,10 @@ namespace GraphTool
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 
 			EditorGUILayout.LabelField("Scope", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeOffset"),new GUIContent("Offset"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeSize"), new GUIContent("Size"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("_scopeUnsigned"), new GUIContent("Unsigned"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeOffset"),new GUIContent("Offset"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeSize"), new GUIContent("Size"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeUnsigned"), new GUIContent("Unsigned"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeFollowLatest"), new GUIContent("Follow Newest Data"));
 
 			EditorGUILayout.EndVertical();
 		}

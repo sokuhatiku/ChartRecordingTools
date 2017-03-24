@@ -59,6 +59,7 @@ namespace GraphTool
 			}
 
 			vh.Clear();
+
 			var cellSize = direction ?
 				handler.GridCellSize.x :
 				handler.GridCellSize.y;
@@ -78,17 +79,19 @@ namespace GraphTool
 				handler.ScopeRect.yMax;
 
 			while((scopeEnd - scopeStart) / cellSize > generators.Count)
-			{
 				cellSize = cellSize * 2;
+
+			var countStart = Mathf.FloorToInt(scopeStart / cellSize) +1;
+			var countEnd = Mathf.FloorToInt(scopeEnd / cellSize) +1;
+
+			var draws = countEnd - countStart;
+			float offset = -(scopeStart % cellSize);
+			if (offset < 0) offset += cellSize; // offset shape to "/|/|/|/|/|"
+			if(offset == 0)
+			{
+				draws++;
+				countStart--;
 			}
-
-			var countStart = Mathf.CeilToInt(scopeStart / cellSize);
-			var countEnd = Mathf.FloorToInt(scopeEnd / cellSize);
-
-			var draws = countEnd - countStart +1;
-			var offset = -(scopeStart % cellSize);
-			if (offset > 0) offset -= cellSize; // Graph shape to "/|/|/|/|/|"
-
 
 			// convert to rectTransform position
 			var tf_gain = direction ?
@@ -96,8 +99,7 @@ namespace GraphTool
 				cellSize * scale.y;
 			var tf_set = (direction ?
 				ScopeToRectX(scopeStart + offset) :
-				ScopeToRectY(scopeStart + offset))
-				+ tf_gain;
+				ScopeToRectY(scopeStart + offset));
 
 			// draw
 			var setting = GetTextSetting();
