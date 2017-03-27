@@ -16,6 +16,16 @@ Shader "GraphTool/Plotter"
 	Properties
 	{
 		_Scale("Scale", Float) = 1
+		_Color("Color", COLOR) = (1,1,1,1)
+
+		// required for UI.Mask
+		_StencilComp ("Stencil Comparison", Float) = 8
+        _Stencil ("Stencil ID", Float) = 1
+        _StencilOp ("Stencil Operation", Float) = 0
+        _StencilWriteMask ("Stencil Write Mask", Float) = 255
+        _StencilReadMask ("Stencil Read Mask", Float) = 255
+        _ColorMask ("Color Mask", Float) = 15
+
 	}
 
 	SubShader
@@ -31,9 +41,20 @@ Shader "GraphTool/Plotter"
 
 		Cull Off
 		Lighting Off
-		ZWrite On
+		ZWrite Off
 		ZTest[unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
+
+		// required for UI.Mask
+		Stencil
+		{
+			Ref [_Stencil]
+			Comp [_StencilComp]
+			Pass [_StencilOp]
+			ReadMask [_StencilReadMask]
+			WriteMask [_StencilWriteMask]
+		}
+		ColorMask [_ColorMask]
 
 		Pass
 		{
@@ -56,6 +77,7 @@ Shader "GraphTool/Plotter"
 			struct VSOut 
 			{
 	            float4 pos : SV_POSITION;
+				float drawLine : PSIZE;
 	        };
 
 			struct GSOut
@@ -66,45 +88,59 @@ Shader "GraphTool/Plotter"
 
 			StructuredBuffer<PointData> Points;
 			uniform float _Scale;
+			uniform fixed4 _Color;
+			uniform fixed _PtsCount;
+			float4x4 _S2LMatrix;
 			float4x4 _L2WMatrix;
 
 			VSOut vert (uint id : SV_VertexID)
 			{
 				VSOut o;
 
-				o.pos = mul(_L2WMatrix, float4(Points[id].pos, 0, 1));
+				o.pos = mul(_S2LMatrix, float4(Points[id].pos, 0, 1));
+				o.drawLine = Points[id].drawLine;
 
 				return o;
 			}
 
-		   	[maxvertexcount(4)]
-		   	void geom (point VSOut input[1], inout TriangleStream<GSOut> outStream)
+		   	[maxvertexcount(8)]
+		   	void geom (line VSOut input[2], inout TriangleStream<GSOut> outStream)
 		   	{
 		     	GSOut output;
-		      	float4 pos = input[0].pos;
 		     	
-				for(int y = 0; y < 2; y++)
-			    {
-		      		for(int x = 0; x < 2; x++)
+				float2 offsH = input[1].pos - input[0].pos;
+				offsH = normalize(offsH) * _Scale;
+				float2 offsV = float2(-offsH.y, offsH.x);
+				bool drawLine = asint(input[0].drawLine);
+				
+				for(int l =0; l < 2; l++)
+				{
+					float4 pos = input[l * drawLine].pos;
+		      		for(int u = 0; u < 2; u++)
 		      		{
-			      		float2 tex = float2(x, y);
-			        	output.tex = tex;
+						offsH *= -1;
+						for(int v = 0; v < 2; v++)
+						{
+			        		output.tex = float2(l+u, v);
+							output.tex.x /= 2;
 			      		
-				      	output.pos = pos + mul(_L2WMatrix, float4(tex*2 - float2(1,1) , 0, 0) * _Scale);
-			          	output.pos = mul (UNITY_MATRIX_MVP, output.pos);
+							output.pos = pos + float4(offsV + offsH * (1 - l^u), 0, 0);
+
+			          		output.pos = mul(UNITY_MATRIX_MVP, mul(_L2WMatrix , output.pos));
 			          	
-				      	outStream.Append (output);
-			      	}
-		      	}
+				      		outStream.Append (output);
+							offsV *= -1;
+			      		}
+		      		}
+				}
 		      	
-		      	// トライアングルストリップを終了
 		      	outStream.RestartStrip();
 		   	}
 
-			// フラグメントシェーダ
 			fixed4 frag (GSOut i) : COLOR
 	        {
-	            return fixed4(1,1,1,1);
+				clip(1 - pow(i.tex.x * 2 - 1, 2) - pow(i.tex.y * 2 - 1, 2));
+	            return _Color;
 	        }
 
 			ENDCG

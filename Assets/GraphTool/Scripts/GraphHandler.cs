@@ -140,7 +140,7 @@ namespace GraphTool
 		void UpdateScopeFromProperty()
 		{
 			if (scopeFollowLatest)
-				scopeOffset.x = GetLatestValue(SYSKEY_TIMESTAMP) ?? 0f;
+				scopeOffset.x = GetLatestValue(SYSKEY_TIMESTAMP) ?? scopeOffset.x;
 			_scopeRect = new Rect(scopeOffset, scopeSize);
 			_scopeRect.x -= scopeSize.x;
 			if (!scopeUnsigned) _scopeRect.y -= scopeSize.y / 2;
@@ -332,6 +332,11 @@ namespace GraphTool
 		{
 			GridParameterCheck();
 			UpdateGraph();
+		}
+
+		private void OnGUI()
+		{
+			GUILayout.Label("データ数: " + (InScopeLastIndex - InScopeFirstIndex));
 		}
 
 		#endregion

@@ -63,10 +63,10 @@ namespace GraphTool
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 
 			EditorGUILayout.LabelField("Scope", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeFollowLatest"), new GUIContent("Follow Last Data"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeOffset"),new GUIContent("Offset"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeSize"), new GUIContent("Size"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeUnsigned"), new GUIContent("Unsigned"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("scopeFollowLatest"), new GUIContent("Follow Newest Data"));
 
 			EditorGUILayout.EndVertical();
 		}

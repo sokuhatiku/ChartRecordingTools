@@ -44,10 +44,9 @@ namespace GraphTool
 			sid_Division = Shader.PropertyToID("_Division");
 		}
 
-		protected override void UpdateGraph()
+		protected override void OnUpdateGraph()
 		{
 			if (!material) return;
-			base.UpdateGraph();
 
 			var scope = handler.ScopeRect;
 			var port = rectTransform.rect;

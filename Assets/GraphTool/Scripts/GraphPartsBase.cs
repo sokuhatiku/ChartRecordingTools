@@ -48,12 +48,15 @@ namespace GraphTool
 				handler.OnUpdateGraph -= UpdateGraph;
 		}
 
-		protected virtual void UpdateGraph()
+		protected void UpdateGraph()
 		{
 			if (handler == null) return;
 			RecalculateScale();
 			SetVerticesDirty();
+			OnUpdateGraph();
 		}
+
+		protected virtual void OnUpdateGraph() { }
 
 		protected virtual void RecalculateScale()
 		{

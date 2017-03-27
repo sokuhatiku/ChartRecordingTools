@@ -7,10 +7,9 @@ This software is released under the MIT License.
 http://opensource.org/licenses/mit-license.php
 */
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -23,120 +22,33 @@ namespace GraphTool
 		public int dataKey = -1;
 
 		[Header("Plot Option")]
-		public bool drawDot = true;
-		public float dotRadius = 1f;
-		public float dotFloating = 0f;
+		public float size = 1f;
 		public bool drawLine = true;
-		public float lineRadius = 0.25f;
-		public bool CutoffDatalessFrame = true;
+		public bool cutoffDatalessFrame = true;
 
-		[Range(10, 2000), Header("Load reduction")]
-		public int drawsLimit = 100;
-		[Range(0, 500)]
-		public int freshDataProtection = 10;
+		[SerializeField, Range(0, 2000), Header("Load reduction")]
+		private int drawsLimit = 100;
+		[SerializeField, Range(0, 500)]
+		private int freshDataProtection = 10;
 
-		public readonly Vector2[] pointList = new Vector2[] {
-			new Vector2(-5, 0),
-			new Vector2(-4, 1),
-			new Vector2(-3, 0),
-			new Vector2(-2,-1),
-			new Vector2(-1, 3),
-			new Vector2( 0,-2),
-			new Vector2( 1, 0),
-		};
-
-
-
-		public bool vertexhelper = true;
-
-		protected override void OnPopulateMesh(VertexHelper vh)
+#if UNITY_EDITOR
+		protected override void OnValidate()
 		{
-			vh.Clear();
-			if (handler == null || !vertexhelper) return;
-			RecalculateScale();
+			base.OnValidate();
+			freshDataProtection = Mathf.Min(freshDataProtection, drawsLimit / 3);
 
-			Vector2? prevPoint = null;
-			foreach (var p in pointList)
+			if (buffer != null && drawsLimit > buffer.count)
 			{
-				PlotToVH(vh, p.x, p.y, ref prevPoint);
+				buffer.Dispose();
+				CreateComputeBuffer(drawsLimit);
 			}
-			return;
-
-			//if (handler == null || dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
-			//if (handler.InScopeFirstIndex == -1) return;
-			//var data = handler.GetDataReader(dataKey);
-			//var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
-
-			//var first = handler.InScopeFirstIndex;
-			//var last = handler.InScopeLastIndex;
-			//for (; last < data.Count && data[last] == null; ++last) { }
-			//if (last == data.Count - 1 && data[last] == null)
-			//	last = handler.InScopeLastIndex;
-
-			//var draws = last - first;
-			//var skip = draws > drawsLimit ? Mathf.CeilToInt(draws / drawsLimit) : 1;
-			//first -= first % skip;
-
-			//int i = first;
-			//if (skip > 1)
-			//{
-			//	for (; i + skip + freshDataProtection < data.Count && i <= last + skip; i += skip)
-			//	{
-			//		float timeave = 0f;
-			//		float dataave = 0f;
-			//		int datacnt = 0;
-			//		for (int j = i; 0 <= j && i - skip < j; --j)
-			//		{
-			//			if (data[j] != null)
-			//			{
-			//				dataave += data[j].Value;
-			//				timeave += time[j].Value;
-			//				++datacnt;
-			//			}
-			//		}
-			//		if (datacnt == 0)
-			//		{
-			//			if (CutoffDatalessFrame) prevPoint = null;
-			//			continue;
-			//		}
-
-			//		Plot(vh, timeave / datacnt, dataave / datacnt, ref prevPoint);
-			//	}
-			//}
-
-			//for (; i < data.Count && i <= last; ++i)
-			//{
-			//	if (data[i] == null)
-			//	{
-			//		if (CutoffDatalessFrame) prevPoint = null;
-			//		continue;
-			//	}
-
-			//	Plot(vh, time[i].Value, data[i].Value, ref prevPoint);
-			//}
-
 		}
+#endif
 
-		void PlotToVH(VertexHelper vh, float time, float data, ref Vector2? prevPoint)
-		{
-			var point = ScopeToRect(new Vector2(time, data));
-
-			if (drawDot) AddDot(vh, new Vector3(point.x, point.y, dotFloating), dotRadius);
-			if (drawLine && prevPoint != null) AddLine(vh, prevPoint.Value, point, lineRadius);
-
-			prevPoint = point;
-		}
-
-
-
-		public bool computebuffer = true;
-
+		Mesh dummyMesh = null;
 		ComputeBuffer buffer = null;
 		Material proceduralMat = null;
 		PointData[] datas = null;
-
-		[Range(0, 10)]
-		public float CB_Scale = 1f;
 
 		public struct PointData
 		{
@@ -144,39 +56,124 @@ namespace GraphTool
 			public bool drawLine;
 		}
 
+		protected override void OnPopulateMesh(VertexHelper vh)
+		{
+			vh.Clear();
+		}
+
+		int ptsCount = 0;
+		protected override void OnUpdateGraph()
+		{
+			ptsCount = 0;
+
+			if (handler == null || dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
+			if (handler.InScopeFirstIndex == -1 || drawsLimit <= 0) return;
+
+			var data = handler.GetDataReader(dataKey);
+			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
+
+			int first = handler.InScopeFirstIndex;
+			int last = handler.InScopeLastIndex;
+
+			int ptc = Mathf.Max(0 , freshDataProtection - (data.Count - last));
+			int lim = drawsLimit;
+			int len = last - first;
+			int skip = 1;
+			if (len > lim)
+			{
+				int fdp2 = freshDataProtection * 2;
+				skip += (len - fdp2) / ( lim - fdp2);
+				first -= first % skip;
+			}
+
+			int i = first;
+			try
+			{
+				
+				Vector2? prevPoint = null;
+				if (skip > 1)
+				{
+					for (;ptc > 0 ? (i + skip < last - ptc) : (i < last + skip); i += skip)
+					{
+						float timeave = 0f;
+						float dataave = 0f;
+						int datacnt = 0;
+						for (int j = i; j < i + skip && j < data.Count; ++j)
+						{
+							if (data[j] != null)
+							{
+								dataave += data[j].Value;
+								timeave += time[j].Value;
+								++datacnt;
+							}
+						}
+						if (datacnt == 0)
+						{
+							if (cutoffDatalessFrame) prevPoint = null;
+							continue;
+						}
+
+						AddPoint(timeave / datacnt, dataave / datacnt, ref prevPoint);
+					}
+				}
+
+				for (; i < last; ++i)
+				{
+					if (data[i] == null)
+					{
+						if (cutoffDatalessFrame) prevPoint = null;
+						continue;
+					}
+
+					AddPoint(time[i].Value, data[i].Value, ref prevPoint);
+				}
+
+				buffer.SetData(datas);
+			}
+			catch (System.IndexOutOfRangeException)
+			{
+				int fdp2 = freshDataProtection * 2;
+				Debug.LogErrorFormat("IndexOutOfRangeException" +
+					"\nlim={0}, length={1}, skip={2}, ptc={3}" +
+					"\ncount={4}, i={5}, tes={6}",
+					lim, len, skip, ptc, ptsCount, i, (last - first - fdp2 + skip) / skip + fdp2 - 1);
+			}
+			
+		}
+
+		void AddPoint(float time, float data, ref Vector2? prevPoint)
+		{
+			//var point = ScopeToRect(new Vector2(time, data));
+			var point = new Vector2(time, data);
+			datas[ptsCount] = new PointData()
+			{
+				pos = point,
+				drawLine = !cutoffDatalessFrame & drawLine
+			};
+			if(prevPoint != null)
+			{
+				datas[ptsCount - 1].drawLine = drawLine;
+			}
+			prevPoint = point;
+			ptsCount++;
+		}
+
 		private void OnRenderObject()
 		{
 			RecalculateScale();
 
-			if (handler == null || !computebuffer) return;
+			if (handler == null || proceduralMat == null || ptsCount <= 0) return;
 
-			Vector2? prevPoint = null;
-			var ptcnt = 0;
-
-			foreach(var p in pointList)
-			{
-				PlotToBuffer(ref ptcnt, p.x, p.y, ref prevPoint);
-			}
-
-
-			buffer.SetData(datas);
 			proceduralMat.SetPass(0);
 			proceduralMat.SetBuffer("Points", buffer);
-			proceduralMat.SetFloat("_Scale", CB_Scale);
-			proceduralMat.SetMatrix("_L2WMatrix", rectTransform.localToWorldMatrix);
-			
-			Graphics.DrawProcedural(MeshTopology.Points, pointList.Length);
-		}
+			proceduralMat.SetFloat("_Scale", size);
+			proceduralMat.SetColor("_Color", color);
 
-		void PlotToBuffer(ref int ptcnt, float time, float data, ref Vector2? prevPoint)
-		{
-			var point = ScopeToRect(new Vector2(time, data));
-			datas[ptcnt] = new PointData()
-			{
-				pos = point,
-				drawLine = prevPoint != null
-			};
-			ptcnt++;
+			var matrix = Matrix4x4.TRS(Vector2.Scale( transration, scale) + offset, Quaternion.identity, scale);
+
+			proceduralMat.SetMatrix("_S2LMatrix", matrix);
+			proceduralMat.SetMatrix("_L2WMatrix", rectTransform.localToWorldMatrix);
+			Graphics.DrawProcedural(MeshTopology.LineStrip, ptsCount);
 		}
 
 		protected override void OnEnable()
@@ -185,18 +182,17 @@ namespace GraphTool
 
 			var shader = Shader.Find("GraphTool/Plotter");
 			if (shader != null)
-			{
 				proceduralMat = new Material(shader);
-			}
 			else
 				return;
-			Debug.Log("CreateMat");
 
-			buffer = new ComputeBuffer(100, Marshal.SizeOf(typeof(PointData)));
-			Debug.Log("CreateBuffer");
+			CreateComputeBuffer(drawsLimit);
+		}
 
-			datas = new PointData[100];
-			Debug.Log("CreateDatas");
+		void CreateComputeBuffer(int capasity)
+		{
+			buffer = new ComputeBuffer(capasity, Marshal.SizeOf(typeof(PointData)));
+			datas = new PointData[capasity];
 		}
 
 		protected override void OnDisable()
@@ -207,8 +203,14 @@ namespace GraphTool
 			{
 				buffer.Release();
 				buffer = null;
-				Debug.Log("DisposeBuffer");
 			}
+		}
+
+		public override Material GetModifiedMaterial(Material baseMaterial)
+		{
+			if (proceduralMat != null)
+				proceduralMat = base.GetModifiedMaterial(proceduralMat);
+			return base.GetModifiedMaterial(baseMaterial);
 		}
 	}
 	
