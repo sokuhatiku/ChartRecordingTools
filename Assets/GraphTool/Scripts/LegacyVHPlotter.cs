@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace GraphTool
 {
 
-	public class LegacyPlotter : GraphPartsBase
+	public class LegacyVHPlotter : GraphPartsBase
 	{
 		[Header("Plotter"), GraphDataKey("handler")]
 		public int dataKey = -1;

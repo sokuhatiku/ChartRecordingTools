@@ -83,13 +83,17 @@ namespace GraphTool
 			if (!_acceptData) return;
 			if (!IsKeyValid(dataKey))
 			{
-				if (dataKey >= 0 && _acceptUnregisteredKey)
-					RegisterInternal(dataKey, new Data("data " + dataKey));
-				else
+				if (dataKey >= 0)
 				{
-					Debug.LogError("Attempted set value using unregistered key.");
-					return;
+					if (_acceptUnregisteredKey)
+						RegisterInternal(dataKey, new Data("data " + dataKey));
+					else
+					{
+						Debug.LogError("Attempted set value using unregistered key.");
+						return;
+					}
 				}
+				else return;
 			}
 			if (dataKey < COUNT_SYSKEY)
 			{

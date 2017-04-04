@@ -21,7 +21,11 @@ namespace GraphTool
 		public float subGridRadius = 0.5f;
 		public Color subGridColor = new Color(1,1,1,0.5f);
 
-		int sid_Color=0, sid_SubColor=0, sid_Offset=0, sid_Size=0, sid_Division=0;
+		int sid_Color=0,
+			sid_SubColor=0,
+			sid_Offset=0,
+			sid_Size=0, 
+			sid_Division=0;
 
 #if UNITY_EDITOR
 		protected override void OnValidate()

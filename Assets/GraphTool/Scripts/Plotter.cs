@@ -7,17 +7,17 @@ This software is released under the MIT License.
 http://opensource.org/licenses/mit-license.php
 */
 
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
 
 namespace GraphTool
 {
 
 	public class Plotter : GraphPartsBase
 	{
+		const int MIN_DRAWLIMIT = 2;
+		const string SHADER_NAME = "GraphTool/Plotter";
+
 		[Header("Plotter"), GraphDataKey("handler")]
 		public int dataKey = -1;
 
@@ -26,28 +26,25 @@ namespace GraphTool
 		public bool drawLine = true;
 		public bool cutoffDatalessFrame = true;
 
-		[SerializeField, Range(0, 2000), Header("Load reduction")]
+		[SerializeField, Range(MIN_DRAWLIMIT, 2000), Header("Load reduction")]
 		private int drawsLimit = 100;
-		[SerializeField, Range(0, 500)]
-		private int freshDataProtection = 10;
 
 #if UNITY_EDITOR
 		protected override void OnValidate()
 		{
 			base.OnValidate();
-			freshDataProtection = Mathf.Min(freshDataProtection, drawsLimit / 3);
 
 			if (buffer != null && drawsLimit > buffer.count)
 			{
 				buffer.Dispose();
-				CreateComputeBuffer(drawsLimit);
+				CreateCapasityObject(drawsLimit);
 			}
 		}
 #endif
 
+
 		Mesh dummyMesh = null;
 		ComputeBuffer buffer = null;
-		Material proceduralMat = null;
 		PointData[] datas = null;
 
 		public struct PointData
@@ -56,100 +53,104 @@ namespace GraphTool
 			public bool drawLine;
 		}
 
-		protected override void OnPopulateMesh(VertexHelper vh)
+		protected override void UpdateGeometry()
 		{
-			vh.Clear();
+			canvasRenderer.SetMesh(dummyMesh);
 		}
 
 		int ptsCount = 0;
+		int prevFirst = 0;
+		int prevLast = 0;
 		protected override void OnUpdateGraph()
 		{
 			ptsCount = 0;
 
-			if (handler == null || dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
-			if (handler.InScopeFirstIndex == -1 || drawsLimit <= 0) return;
-
-			var data = handler.GetDataReader(dataKey);
-			var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
+			if (dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
+			if (handler.InScopeFirstIndex == -1 || drawsLimit < MIN_DRAWLIMIT) return;
 
 			int first = handler.InScopeFirstIndex;
 			int last = handler.InScopeLastIndex;
 
-			int ptc = Mathf.Max(0 , freshDataProtection - (data.Count - last));
-			int lim = drawsLimit;
-			int len = last - first;
-			int skip = 1;
-			if (len > lim)
+			// Update Points
+			if (prevFirst != first || prevLast != last)
 			{
-				int fdp2 = freshDataProtection * 2;
-				skip += (len - fdp2) / ( lim - fdp2);
-				first -= first % skip;
-			}
+				var data = handler.GetDataReader(dataKey);
+				var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
-			int i = first;
-			try
-			{
-				
+				int lim = drawsLimit;
+				int len = last - first;
+
 				Vector2? prevPoint = null;
-				if (skip > 1)
+				if (len >= lim)
 				{
-					for (;ptc > 0 ? (i + skip < last - ptc) : (i < last + skip); i += skip)
+					// Skip
+					int skip = (len + 1) / (lim - 1) + 1;
+					first -= first % skip;
+
+					// skip point
+					for (int i= first; i + skip < last-1; i += skip)
+						AddPointAverage(time, data, i, Mathf.Min(i + skip - 1, last), ref prevPoint);
+
+					// last point
+					if (data[last] != null)
+						AddPoint(time[last].Value, data[last].Value, ref prevPoint);
+				}
+				else
+				{
+					// No Skip
+					for (int i = first; i <= last; ++i)
 					{
-						float timeave = 0f;
-						float dataave = 0f;
-						int datacnt = 0;
-						for (int j = i; j < i + skip && j < data.Count; ++j)
-						{
-							if (data[j] != null)
-							{
-								dataave += data[j].Value;
-								timeave += time[j].Value;
-								++datacnt;
-							}
-						}
-						if (datacnt == 0)
+						if (data[i] == null)
 						{
 							if (cutoffDatalessFrame) prevPoint = null;
 							continue;
 						}
-
-						AddPoint(timeave / datacnt, dataave / datacnt, ref prevPoint);
+						AddPoint(time[i].Value, data[i].Value, ref prevPoint);
 					}
-				}
-
-				for (; i < last; ++i)
-				{
-					if (data[i] == null)
-					{
-						if (cutoffDatalessFrame) prevPoint = null;
-						continue;
-					}
-
-					AddPoint(time[i].Value, data[i].Value, ref prevPoint);
 				}
 
 				buffer.SetData(datas);
+				prevFirst = first;
+				prevLast = last;
 			}
-			catch (System.IndexOutOfRangeException)
+
+			// Update Material
+			if (material != null)
 			{
-				int fdp2 = freshDataProtection * 2;
-				Debug.LogErrorFormat("IndexOutOfRangeException" +
-					"\nlim={0}, length={1}, skip={2}, ptc={3}" +
-					"\ncount={4}, i={5}, tes={6}",
-					lim, len, skip, ptc, ptsCount, i, (last - first - fdp2 + skip) / skip + fdp2 - 1);
+				material.SetBuffer("Points", buffer);
+				material.SetInt("_PtsCount", ptsCount);
+				material.SetFloat("_Scale", size);
+				material.SetColor("_Color", color);
+
+				var scope2Local =
+					Matrix4x4.TRS(
+						Vector2.Scale(transration, scale) + offset,
+						Quaternion.identity,
+						scale);
+
+				material.SetMatrix("_S2LMatrix", scope2Local);
+
+				var local2World = rectTransform.localToWorldMatrix;
+				material.SetMatrix("_L2WMatrix", local2World);
 			}
-			
+
 		}
 
 		void AddPoint(float time, float data, ref Vector2? prevPoint)
 		{
-			//var point = ScopeToRect(new Vector2(time, data));
 			var point = new Vector2(time, data);
-			datas[ptsCount] = new PointData()
+			try
 			{
-				pos = point,
-				drawLine = !cutoffDatalessFrame & drawLine
-			};
+				datas[ptsCount] = new PointData()
+				{
+					pos = point,
+					drawLine = !cutoffDatalessFrame & drawLine
+				};
+			}
+			catch (System.IndexOutOfRangeException e)
+			{
+				Debug.LogError(e.Message);
+			}
 			if(prevPoint != null)
 			{
 				datas[ptsCount - 1].drawLine = drawLine;
@@ -158,39 +159,55 @@ namespace GraphTool
 			ptsCount++;
 		}
 
-		private void OnRenderObject()
+		void AddPointAverage(Data.Reader time, Data.Reader data, int start, int end, ref Vector2? prevPoint)
 		{
-			RecalculateScale();
+			float timeave = 0f;
+			float dataave = 0f;
+			int datacnt = 0;
+			for (int i = start; i <= end ; ++i)
+			{
+				if (data[i] == null) continue;
+				dataave += data[i].Value;
+				timeave += time[i].Value;
+				++datacnt;
+			}
 
-			if (handler == null || proceduralMat == null || ptsCount <= 0) return;
-
-			proceduralMat.SetPass(0);
-			proceduralMat.SetBuffer("Points", buffer);
-			proceduralMat.SetFloat("_Scale", size);
-			proceduralMat.SetColor("_Color", color);
-
-			var matrix = Matrix4x4.TRS(Vector2.Scale( transration, scale) + offset, Quaternion.identity, scale);
-
-			proceduralMat.SetMatrix("_S2LMatrix", matrix);
-			proceduralMat.SetMatrix("_L2WMatrix", rectTransform.localToWorldMatrix);
-			Graphics.DrawProcedural(MeshTopology.LineStrip, ptsCount);
+			if (datacnt != 0)
+				AddPoint(timeave / datacnt, dataave / datacnt, ref prevPoint);
+			else if (cutoffDatalessFrame)
+				prevPoint = null;
 		}
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 
-			var shader = Shader.Find("GraphTool/Plotter");
+			var shader = Shader.Find(SHADER_NAME);
 			if (shader != null)
-				proceduralMat = new Material(shader);
+				material = new Material(shader);
 			else
+			{
+				enabled = false;
 				return;
+			}
 
-			CreateComputeBuffer(drawsLimit);
+			CreateCapasityObject(drawsLimit);
 		}
 
-		void CreateComputeBuffer(int capasity)
+		void CreateCapasityObject(int capasity)
 		{
+			dummyMesh = new Mesh();
+			var vertices = new Vector3[capasity*3];
+			var indices = new int[capasity*3];
+			int i=0;
+			for (; i<capasity*3; i++)
+			{
+				vertices[i] = new Vector3(i / 2, -i % 2) * 10;
+				indices[i] = i;
+			}
+			dummyMesh.vertices = vertices;
+			dummyMesh.SetIndices(indices, MeshTopology.Lines, 0);
+
 			buffer = new ComputeBuffer(capasity, Marshal.SizeOf(typeof(PointData)));
 			datas = new PointData[capasity];
 		}
@@ -205,13 +222,7 @@ namespace GraphTool
 				buffer = null;
 			}
 		}
-
-		public override Material GetModifiedMaterial(Material baseMaterial)
-		{
-			if (proceduralMat != null)
-				proceduralMat = base.GetModifiedMaterial(proceduralMat);
-			return base.GetModifiedMaterial(baseMaterial);
-		}
+		
 	}
 	
 }

@@ -1,0 +1,26 @@
+# 疑似インスタンスプロッタの描画座標ズレ問題
+
+## 概要
+InstancePlotter（仮）を使い、グラフを描画する際、描画座標がズレる。拡大縮小は問題なく、全体的に右上にシフトしている。
+観察してみると、ズレたプロットデータはその座標系として、GUIシステムの根っこにあるCanvasのRectTransformを使用している模様。自身のRectTransformを操作しても移動しないが、CanvasのRectTransformを操作すると動かすことが出来る。
+
+## 比較
+ |LegacyPlotter|Plotter|InstancePlotter  
+--|--|--|--
+問題|×|×|〇
+手法|OnPopulateMesh|DrawProcedural|dummyMesh
+座標変換|C#|HLSL|HLSL  
+UGUI|〇|×|〇
+
+## 原因の推測
+### 仮説1
+内部でMeshに対して座標変換が行われている
+#### 反論
+DrawProceduralがズレない
+
+### 仮説2
+UnityCG.cgincが提供するUNITY_MATRIXの値が描画タイミングで異なる
+
+#### 結果
+C#から適切なRectTransformのlocaltoWorldMatrixを送ってやると正しい位置に設置できた。だが、今度はMaskの範囲がズレ始めた。Mask範囲は相変わらずRootCanvasに依存しているようだ。
+やはり描画タイミングがおかしいのかもしれない。
