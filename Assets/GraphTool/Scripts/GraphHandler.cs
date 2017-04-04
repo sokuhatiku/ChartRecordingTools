@@ -33,7 +33,7 @@ namespace GraphTool
 		[SerializeField] protected bool _acceptUnregisteredKey = false;
 
 		float startTime = 0f;
-		bool dataAccepted = false;
+		//bool dataAccepted = false;
 
 		[SerializeField, HideInInspector]
 		List<Data> dataList = new List<Data>();
@@ -102,7 +102,7 @@ namespace GraphTool
 			}
 
 			dataList[dataKey].SetCurrent(value);
-			dataAccepted = true;
+			//dataAccepted = true;
 		}
 
 		public Data.Reader GetDataReader(int dataKey)
@@ -323,8 +323,11 @@ namespace GraphTool
 				return;
 #endif
 
-			if (_autoDetermine && dataAccepted)
+			if (_autoDetermine)
+			{
 				Determine();
+				//dataAccepted = false;
+			}
 		}
 
 		private void OnRectTransformDimensionsChange()
@@ -338,11 +341,7 @@ namespace GraphTool
 			UpdateGraph();
 		}
 
-		private void OnGUI()
-		{
-			GUILayout.Label("データ数: " + (InScopeLastIndex - InScopeFirstIndex));
-		}
-
+		
 		#endregion
 
 	}

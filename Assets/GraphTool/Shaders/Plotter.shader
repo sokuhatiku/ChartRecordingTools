@@ -13,15 +13,7 @@ Shader "GraphTool/Plotter"
 	{
 		_Scale("Scale", Float) = 1
 		_Color("Color", COLOR) = (1,1,1,1)
-
-		// required for UI.Mask
-		_StencilComp ("Stencil Comparison", Float) = 8
-        _Stencil ("Stencil ID", Float) = 1
-        _StencilOp ("Stencil Operation", Float) = 0
-        _StencilWriteMask ("Stencil Write Mask", Float) = 255
-        _StencilReadMask ("Stencil Read Mask", Float) = 255
-        _ColorMask ("Color Mask", Float) = 15
-
+		_PointsCount("Points", int) = 0
 	}
 
 	SubShader
@@ -41,20 +33,10 @@ Shader "GraphTool/Plotter"
 		ZTest[unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
 
-		// required for UI.Mask
-		Stencil
-		{
-			Ref [_Stencil]
-			Comp [_StencilComp]
-			Pass [_StencilOp]
-			ReadMask [_StencilReadMask]
-			WriteMask [_StencilWriteMask]
-		}
-		ColorMask [_ColorMask]
-
 		Pass
 		{
-			CGPROGRAM
+			Name "Default"
+		CGPROGRAM
 			#pragma target 5.0
 			#pragma enable_d3d11_debug_symbols
 
@@ -72,10 +54,10 @@ Shader "GraphTool/Plotter"
 			};
 			
 			StructuredBuffer<PointData> Points;
-			uniform float _Scale;
-			uniform fixed4 _Color;
-			uniform int _PtsCount;
-			uniform float4 _ClipRect;
+			int _PointsCount;
+			float _Scale;
+			fixed4 _Color;
+			float4 _ClippingRect;
 			float4x4 _S2LMatrix;
 			float4x4 _L2WMatrix;
 
@@ -99,9 +81,9 @@ Shader "GraphTool/Plotter"
 				VSOut o;
 
 				uint id = floor(i.id / 3);
-
-				o.pos0 = mul(_S2LMatrix, float4(Points[min(_PtsCount-1, id)].pos, 0, 1));
-				o.pos1 = mul(_S2LMatrix, float4(Points[min(_PtsCount-1, id+1)].pos, 0, 1));
+				uint m =  max(0,_PointsCount-1);
+				o.pos0 = mul(_S2LMatrix, float4(Points[min(id , m)].pos, 0, 1));
+				o.pos1 = mul(_S2LMatrix, float4(Points[min(id+1, m)].pos, 0, 1));
 				o.drawLine = Points[id].drawLine;
 				return o;
 			}
@@ -125,7 +107,7 @@ Shader "GraphTool/Plotter"
 				
 				for(int l =0; l < 2; l++)
 				{
-					float4 pos = lerp(input[0].pos0, input[0].pos1, l);
+					float4 pos = lerp(input[0].pos0, input[0].pos1, l * drawLine);
 		      		for(int u = 0; u < 2; u++)
 		      		{
 						offsH *= -1;
@@ -136,7 +118,7 @@ Shader "GraphTool/Plotter"
 
 			      			float4 ppos = pos + float4(offsV + offsH * (1 - l^u), 0, 0);
 							output.wPos = ppos;
-			          		output.pos = mul(UNITY_MATRIX_VP, mul(_L2WMatrix, output.wPos));
+			          		output.pos = mul(UNITY_MATRIX_VP, mul(_L2WMatrix, ppos));
 
 				      		outStream.Append (output);
 							offsV *= -1;
@@ -149,17 +131,17 @@ Shader "GraphTool/Plotter"
 
 			fixed4 frag (GSOut i) : COLOR
 	        {
-				//clip(
-				//	min(
-				//		1 - pow(i.tex.x * 2 - 1, 2) - pow(i.tex.y * 2 - 1, 2),
-				//		UnityGet2DClipping(i.wPos.xy, _ClipRect)
-				//	)
-				//);
-				clip(1 - pow(i.tex.x * 2 - 1, 2) - pow(i.tex.y * 2 - 1, 2));
+				
+				clip(
+					min(
+						1 - pow(i.tex.x * 2 - 1, 2) - pow(i.tex.y * 2 - 1, 2),
+						UnityGet2DClipping(i.wPos.xy, _ClippingRect) - 0.5
+					)
+				);
 				return _Color;
 	        }
 
-			ENDCG
+		ENDCG
 		}
 	}
 }

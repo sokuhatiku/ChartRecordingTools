@@ -16,9 +16,9 @@ namespace GraphTool
 	public class Data
 	{
 		public string name;
-		protected List<float?> data = new List<float?>();
-		protected float? current = null;
-		protected float? latest = null;
+		protected List<float?> data = null;
+		protected float? currentValue = null;
+		protected int latestIndex = -1;
 
 		public Data(string displayName)
 		{
@@ -27,15 +27,16 @@ namespace GraphTool
 
 		public void SetCurrent(float value)
 		{
-			current = value;
+			currentValue = value;
 		}
 
 		public void Determine()
 		{
 			if(data == null) data = new List<float?>();
-			data.Add(current);
-			if(current != null) latest = current;
-			current = null;
+			data.Add(currentValue);
+			if(currentValue != null)
+				latestIndex = data.Count -1;
+			currentValue = null;
 		}
 
 		public void Clear()
@@ -47,7 +48,7 @@ namespace GraphTool
 		Reader _reader;
 		public Reader GetReader()
 		{
-			if (data == null) data = new List<float?>();
+			if (data == null) { data = new List<float?>(); latestIndex = -1; }
 			if (_reader == null) _reader = new Reader(this);
 			return _reader;
 		}
@@ -64,12 +65,26 @@ namespace GraphTool
 
 			public float? CurrentValue
 			{
-				get { return data.current; }
+				get { return data.currentValue; }
 			}
 
 			public float? LatestValue
 			{
-				get { return data.latest; }
+				get
+				{
+					var i = data.latestIndex;
+					return i < 0 || i >= data.data.Count ? null 
+						: data.data[i];
+				}
+			}
+
+			public int LatestIndex
+			{
+				get {
+					var i = data.latestIndex;
+					return i < 0 || i >= data.data.Count ? -1
+						: i ;
+				}
 			}
 
 			public int Count

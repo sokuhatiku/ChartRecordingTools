@@ -9,13 +9,14 @@ http://opensource.org/licenses/mit-license.php
 
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GraphTool
 {
 
 	public class Plotter : GraphPartsBase
 	{
-		const int MIN_DRAWLIMIT = 2;
+		const int MIN_DRAWLIMIT = 3;
 		const string SHADER_NAME = "GraphTool/Plotter";
 
 		[Header("Plotter"), GraphDataKey("handler")]
@@ -63,62 +64,74 @@ namespace GraphTool
 		int prevLast = 0;
 		protected override void OnUpdateGraph()
 		{
-			ptsCount = 0;
 
-			if (dataKey == -1 || !handler.IsKeyValid(dataKey)) return;
-			if (handler.InScopeFirstIndex == -1 || drawsLimit < MIN_DRAWLIMIT) return;
-
-			int first = handler.InScopeFirstIndex;
-			int last = handler.InScopeLastIndex;
-
-			// Update Points
-			if (prevFirst != first || prevLast != last)
+			if (dataKey > -1 &&
+				handler.IsKeyValid(dataKey) &&
+				handler.InScopeFirstIndex != -1 &&
+				handler.InScopeLastIndex != -1)
 			{
-				var data = handler.GetDataReader(dataKey);
-				var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
-				int lim = drawsLimit;
-				int len = last - first;
+				int first = handler.InScopeFirstIndex;
+				int last = handler.InScopeLastIndex;
 
-				Vector2? prevPoint = null;
-				if (len >= lim)
+				// Update Points
+				if (prevFirst != first || prevLast != last)
 				{
-					// Skip
-					int skip = (len + 1) / (lim - 1) + 1;
-					first -= first % skip;
+					ptsCount = 0;
+					var data = handler.GetDataReader(dataKey);
+					var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
-					// skip point
-					for (int i= first; i + skip < last-1; i += skip)
-						AddPointAverage(time, data, i, Mathf.Min(i + skip - 1, last), ref prevPoint);
+					int lim = drawsLimit;
+					int len = last - first;
 
-					// last point
-					if (data[last] != null)
-						AddPoint(time[last].Value, data[last].Value, ref prevPoint);
-				}
-				else
-				{
-					// No Skip
-					for (int i = first; i <= last; ++i)
+					Vector2? prevPoint = null;
+					if (len >= lim)
 					{
-						if (data[i] == null)
-						{
-							if (cutoffDatalessFrame) prevPoint = null;
-							continue;
-						}
-						AddPoint(time[i].Value, data[i].Value, ref prevPoint);
-					}
-				}
+						// Skip
+						int skip = (len -3) / (lim - 3) + 1;
+						first -= first % skip;
+						int i = first + 1;
 
-				buffer.SetData(datas);
-				prevFirst = first;
-				prevLast = last;
+						// first point
+						AddPointAverage(time, data, Mathf.Max(first - skip, 0), 0, ref prevPoint);
+
+						// skip point
+						for (; i + skip < last; i += skip)
+							AddPointAverage(time, data, i, Mathf.Min(i + skip - 1, last), ref prevPoint);
+
+						// last point
+						AddPointAverage(time, data, i, Mathf.Min(last + skip, data.Count - 1), ref prevPoint);
+
+					}
+					else
+					{
+						// No Skip
+						for (int i = first; i <= last; ++i)
+						{
+							if (data[i] == null)
+							{
+								if (cutoffDatalessFrame) prevPoint = null;
+								continue;
+							}
+							AddPoint(time[i].Value, data[i].Value, ref prevPoint);
+						}
+					}
+
+					buffer.SetData(datas);
+					prevFirst = first;
+					prevLast = last;
+				}
+			}
+			else
+			{
+				ptsCount = 0;
 			}
 
 			// Update Material
 			if (material != null)
 			{
 				material.SetBuffer("Points", buffer);
-				material.SetInt("_PtsCount", ptsCount);
+				material.SetInt("_PointsCount", ptsCount);
 				material.SetFloat("_Scale", size);
 				material.SetColor("_Color", color);
 
@@ -132,6 +145,10 @@ namespace GraphTool
 
 				var local2World = rectTransform.localToWorldMatrix;
 				material.SetMatrix("_L2WMatrix", local2World);
+				
+				var maskRect = rectTransform.rect;
+				material.SetVector("_ClippingRect", new Vector4(maskRect.xMin, maskRect.yMin, maskRect.xMax, maskRect.yMax));
+				
 			}
 
 		}
@@ -222,7 +239,12 @@ namespace GraphTool
 				buffer = null;
 			}
 		}
-		
+
+		//private void OnGUI()
+		//{
+		//	GUILayout.Label(string.Format("ptsCount:{0}\nFirst:{1}\nLast:{2}",  ptsCount, handler.InScopeFirstIndex, handler.InScopeLastIndex));
+		//}
+
 	}
 	
 }

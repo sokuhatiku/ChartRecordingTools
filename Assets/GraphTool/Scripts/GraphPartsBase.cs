@@ -13,9 +13,9 @@ using UnityEngine.UI;
 namespace GraphTool
 {
 
-	public abstract class GraphPartsBase : MaskableGraphic,
-		ILayoutElement,
-		ICanvasRaycastFilter
+	public abstract class GraphPartsBase : MaskableGraphic//,
+		//ILayoutElement,
+		//ICanvasRaycastFilter
 	{
 		[SerializeField]protected GraphHandler handler;
 		protected Vector2 transration;
@@ -159,23 +159,23 @@ namespace GraphTool
 		}
 
 
-		public void CalculateLayoutInputHorizontal() { }
-		public void CalculateLayoutInputVertical() { }
+		//public void CalculateLayoutInputHorizontal() { }
+		//public void CalculateLayoutInputVertical() { }
 
-		public float minWidth { get { return 0; } }
-		public float preferredWidth { get { return 0; } }
-		public float flexibleWidth { get { return -1; } }
+		//public float minWidth { get { return 0; } }
+		//public float preferredWidth { get { return 0; } }
+		//public float flexibleWidth { get { return -1; } }
 
-		public float minHeight { get { return 0; } }
-		public float preferredHeight { get { return 0; } }
-		public float flexibleHeight { get { return -1; } }
+		//public float minHeight { get { return 0; } }
+		//public float preferredHeight { get { return 0; } }
+		//public float flexibleHeight { get { return -1; } }
 
-		public int layoutPriority { get { return 0; } }
+		//public int layoutPriority { get { return 0; } }
 
 
-		public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
-		{
-			return false;
-		}
+		//public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
+		//{
+		//	return false;
+		//}
 	}
 }
