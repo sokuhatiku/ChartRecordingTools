@@ -131,7 +131,6 @@ Shader "GraphTool/Plotter"
 
 			fixed4 frag (GSOut i) : COLOR
 	        {
-				
 				clip(
 					min(
 						1 - pow(i.tex.x * 2 - 1, 2) - pow(i.tex.y * 2 - 1, 2),

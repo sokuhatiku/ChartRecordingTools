@@ -42,7 +42,11 @@ namespace GraphTool
 			font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 		}
 #endif
-		
+
+		protected override void OnUpdateGraph()
+		{
+			SetVerticesDirty();
+		}
 
 		List<TextGenerator> generators = new List<TextGenerator>();
 		readonly UIVertex[] m_TempVerts = new UIVertex[4];
@@ -151,6 +155,7 @@ namespace GraphTool
 			return setting;
 
 		}
+		
 	}
 
 }

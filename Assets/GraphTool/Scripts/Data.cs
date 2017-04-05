@@ -63,6 +63,11 @@ namespace GraphTool
 				this.data = data;
 			}
 
+			public string Name
+			{
+				get { return data.name; }
+			}
+
 			public float? CurrentValue
 			{
 				get { return data.currentValue; }

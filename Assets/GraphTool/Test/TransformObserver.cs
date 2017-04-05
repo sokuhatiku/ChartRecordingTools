@@ -4,12 +4,13 @@ namespace GraphTool.Test
 {
 	public class TransformObserver : MonoBehaviour
 	{
-		public GraphHandler graph;
-
-		[GraphDataKey("graph")]
-		public int posX=-1, posY = -1, posZ = -1;
+		[Header("Observe target")]
 		public Transform target;
 
+		[Header("Input destination")]
+		public GraphHandler graph;
+		[GraphDataKey("graph")]
+		public int posX=-1, posY = -1, posZ = -1;
 
 		private void Update()
 		{

@@ -24,8 +24,7 @@ namespace GraphTool
 		public const int SYSKEY_TIMESTAMP = 0;
 
 		#endregion
-
-
+		
 		#region Data
 
 		[SerializeField] protected bool _acceptData = true;
@@ -33,37 +32,24 @@ namespace GraphTool
 		[SerializeField] protected bool _acceptUnregisteredKey = false;
 
 		float startTime = 0f;
-		//bool dataAccepted = false;
 
 		[SerializeField, HideInInspector]
 		List<Data> dataList = new List<Data>();
-
-		public void Determine()
-		{
-			dataList[SYSKEY_TIMESTAMP].SetCurrent(Time.time - startTime);
-			foreach (var data in dataList)
-				data.Determine();
-			UpdateGraph();
-		}
-
-		public void ClearAll()
-		{
-			foreach (var data in dataList)
-				data.Clear();
-			startTime = Time.time;
-			scopeOffset.x = 0;
-			UpdateGraph();
-		}
-
-		private void RegisterInternal(int dataKey, Data data)
-		{
-			if (dataKey >= dataList.Count) dataList.Insert(dataKey, data);
-			else dataList[dataKey] = data;
-		}
+		
 
 		public bool IsKeyValid(int dataKey)
 		{
 			return 0 <= dataKey && dataKey < dataList.Count && dataList[dataKey] != null;
+		}
+
+		public int GetDataKeyCount()
+		{
+			return dataList.Count;
+		}
+
+		public int GetDataCount()
+		{
+			return dataList[SYSKEY_TIMESTAMP].GetReader().Count;
 		}
 
 		public float? GetCurrentValue(int dataKey)
@@ -76,6 +62,18 @@ namespace GraphTool
 		{
 			if (!IsKeyValid(dataKey)) return null;
 			return dataList[dataKey].GetReader().LatestValue;
+		}
+
+		public Data.Reader GetDataReader(int dataKey)
+		{
+			if (!IsKeyValid(dataKey))
+			{
+				if (dataKey >= 0 && _acceptUnregisteredKey)
+					RegisterInternal(dataKey, new Data("data " + dataKey));
+				else throw new ArgumentException("Data does not exist at specified key.", "dataKey");
+			}
+
+			return dataList[dataKey].GetReader();
 		}
 
 		public void SetValue(int dataKey, float value)
@@ -102,29 +100,43 @@ namespace GraphTool
 			}
 
 			dataList[dataKey].SetCurrent(value);
-			//dataAccepted = true;
 		}
 
-		public Data.Reader GetDataReader(int dataKey)
+		private void RegisterInternal(int dataKey, Data data)
 		{
-			if (!IsKeyValid(dataKey))
-			{
-				if (dataKey >= 0 && _acceptUnregisteredKey)
-					RegisterInternal(dataKey, new Data("data " + dataKey));
-				else throw new ArgumentException("Data does not exist at specified key.", "dataKey");
-			}
-
-			return dataList[dataKey].GetReader();
+			if (dataKey >= dataList.Count) dataList.Insert(dataKey, data);
+			else dataList[dataKey] = data;
 		}
 
 		#endregion
 
-
 		#region Scope
 
 		[SerializeField] protected Vector2 scopeOffset = new Vector2(0, 0);
+		public Vector2 ScopeOffset
+		{
+			get { return scopeOffset; }
+			set
+			{
+				scopeOffset = value;
+				scopeFollowLatest = false;
+			}
+		}
+
 		[SerializeField] protected Vector2 scopeSize = new Vector2(5f, 200f);
+		public Vector2 ScopeSize
+		{
+			get { return scopeSize; }
+			set
+			{
+				scopeSize = new Vector2(
+						value.x < DENOMINATOR_MIN ? DENOMINATOR_MIN : value.x,
+						value.y < DENOMINATOR_MIN ? DENOMINATOR_MIN : value.y);
+			}
+		}
+
 		[SerializeField] protected bool scopeUnsigned = false;
+
 		[SerializeField] protected bool scopeFollowLatest = true;
 
 		private Rect _scopeRect;
@@ -151,7 +163,6 @@ namespace GraphTool
 		}
 
 		#endregion
-
 
 		#region Grid
 
@@ -196,7 +207,6 @@ namespace GraphTool
 		}
 
 		#endregion
-
 
 		#region IndexRange
 
@@ -286,7 +296,6 @@ namespace GraphTool
 
 		#endregion
 
-
 		#region UpdateGraph
 
 		public Action OnUpdateGraph;
@@ -302,6 +311,48 @@ namespace GraphTool
 
 		#endregion
 
+		#region Controller
+
+		public void ToggleDataAccepting(bool toggle)
+		{
+			_acceptData = toggle;
+		}
+
+		public void ToggleScopeFollowing(bool toggle)
+		{
+			scopeFollowLatest = toggle;
+		}
+
+		public void Determine()
+		{
+			dataList[SYSKEY_TIMESTAMP].SetCurrent(Time.time - startTime);
+			foreach (var data in dataList)
+				data.Determine();
+			UpdateGraph();
+		}
+
+		public void ClearAll()
+		{
+			foreach (var data in dataList)
+				data.Clear();
+			startTime = Time.time;
+			scopeOffset.x = 0;
+			UpdateGraph();
+		}
+
+		public void ExportAll(string path)
+		{
+			if (GetDataCount() <= 0) return;
+			GraphExporter.Export(this, 0, GetDataCount() - 1, path);
+		}
+
+		public void ExportScope(string path)
+		{
+			if (InScopeFirstIndex == -1) return;
+			GraphExporter.Export(this, InScopeFirstIndex, InScopeLastIndex, path);
+		}
+
+		#endregion
 
 		#region UnityMessages
 
@@ -326,7 +377,6 @@ namespace GraphTool
 			if (_autoDetermine)
 			{
 				Determine();
-				//dataAccepted = false;
 			}
 		}
 
@@ -341,7 +391,6 @@ namespace GraphTool
 			UpdateGraph();
 		}
 
-		
 		#endregion
 
 	}

@@ -89,6 +89,7 @@ namespace GraphTool
 			}
 			drawCnt = 0;
 		}
+
 		int drawCnt;
 		void Plot(VertexHelper vh, float time, float data, ref Vector2? prevPoint)
 		{
@@ -100,5 +101,53 @@ namespace GraphTool
 			drawCnt++;
 		}
 
+
+		protected virtual void AddDot(VertexHelper vh, Vector3 pt, float radius)
+		{
+			AddDot(vh, pt, radius, color);
+		}
+
+		protected virtual void AddDot(VertexHelper vh, Vector3 pt, float radius, Color32 color)
+		{
+			if (radius <= 0) return;
+			vh.AddVert(new Vector3(pt.x, pt.y - radius, -pt.z), color, Vector2.zero);
+			vh.AddVert(new Vector3(pt.x - radius, pt.y, -pt.z), color, Vector2.zero);
+			vh.AddVert(new Vector3(pt.x, pt.y + radius, -pt.z), color, Vector2.zero);
+			vh.AddVert(new Vector3(pt.x + radius, pt.y, -pt.z), color, Vector2.zero);
+
+			var vertId = vh.currentVertCount - 1;
+			vh.AddTriangle(vertId - 3, vertId - 2, vertId - 1);
+			vh.AddTriangle(vertId - 1, vertId, vertId - 3);
+		}
+
+		protected virtual void AddLine(VertexHelper vh, Vector3 from, Vector3 to, float radius)
+		{
+			AddLine(vh, from, to, radius, color);
+		}
+
+		protected virtual void AddLine(VertexHelper vh, Vector3 from, Vector3 to, float radius, Color32 color)
+		{
+			AddLine(vh, from, color, to, color, radius);
+		}
+
+		protected virtual void AddLine(VertexHelper vh,
+			Vector3 from, Color32 fromColor,
+			Vector3 to, Color32 toColor, float radius)
+		{
+			if (radius <= 0) return;
+
+			var dir = (to - from).normalized;
+			var lSide = new Vector3(-dir.y, dir.x) * radius;
+			var rSide = new Vector3(dir.y, -dir.x) * radius;
+
+			vh.AddVert(from + lSide, fromColor, Vector2.zero);
+			vh.AddVert(from + rSide, fromColor, Vector2.zero);
+			vh.AddVert(to + rSide, toColor, Vector2.zero);
+			vh.AddVert(to + lSide, toColor, Vector2.zero);
+
+			var vertId = vh.currentVertCount - 1;
+			vh.AddTriangle(vertId - 1, vertId - 2, vertId - 3);
+			vh.AddTriangle(vertId - 3, vertId, vertId - 1);
+		}
 	}
 }

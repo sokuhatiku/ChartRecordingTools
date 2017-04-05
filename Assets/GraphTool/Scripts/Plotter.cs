@@ -156,18 +156,13 @@ namespace GraphTool
 		void AddPoint(float time, float data, ref Vector2? prevPoint)
 		{
 			var point = new Vector2(time, data);
-			try
+
+			datas[ptsCount] = new PointData()
 			{
-				datas[ptsCount] = new PointData()
-				{
-					pos = point,
-					drawLine = !cutoffDatalessFrame & drawLine
-				};
-			}
-			catch (System.IndexOutOfRangeException e)
-			{
-				Debug.LogError(e.Message);
-			}
+				pos = point,
+				drawLine = !cutoffDatalessFrame & drawLine
+			};
+
 			if(prevPoint != null)
 			{
 				datas[ptsCount - 1].drawLine = drawLine;
