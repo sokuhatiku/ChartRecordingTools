@@ -1,5 +1,5 @@
-# GraphTool
-This is a simply realtime plotting tool for uGUI.<br />
+# UnityGUI-ChartRecorder
+This is a simply chart recording tool for uGUI. I with use for develop VR gesture.<br />
 *Warning:* This project is in alpha version. This contains many bugs, many possibility of sudden specification change, and many Engrish.
 
 uGUI上で動作する（今はまだ）シンプルなリアルタイムプロットツールです。ジェスチャ開発のためのツールを目指しています。
@@ -17,8 +17,10 @@ uGUI上で動作する（今はまだ）シンプルなリアルタイムプロ�
 * グラフの種類
  * 山グラフが欲しい
  * 独自の軸を持つグラフとか
-* ~~利用しやすくするEditor拡張~~
+* 利用しやすくするEditor拡張
+ * とっつきやすさ（PrefabやMenuItem）
 * 軽量化
+ * 出来ればOnPopulateMeshフリー
 * カスタマイズ性
 * 記録停止、再開、リセット、csv出力等の操作
 
