@@ -81,26 +81,32 @@ namespace GraphTool
 					var data = handler.GetDataReader(dataKey);
 					var time = handler.GetDataReader(GraphHandler.SYSKEY_TIMESTAMP);
 
-					int lim = drawsLimit;
-					int len = last - first;
+					bool prevPoint = false;
 
-					Vector2? prevPoint = null;
-					if (len >= lim)
+					if (last - first >= drawsLimit)
 					{
 						// Skip
-						int skip = (len -3) / (lim - 3) + 1;
-						first -= first % skip;
-						int i = first + 1;
+						int skip = Mathf.NextPowerOfTwo((last - first + drawsLimit - 7) / (drawsLimit - 5));
+						var mask = skip - 1;
+
+						first = Mathf.Max(0, first - (first&mask) - skip);
+						last = Mathf.Min(time.Count-1, last - (last&mask) + skip*2);
 
 						// first point
-						AddPointAverage(time, data, Mathf.Max(first - skip, 0), 0, ref prevPoint);
+						if (first == 0)
+						{
+							AddPoint(time[0].Value, data[0], ref prevPoint);
+						}
 
 						// skip point
-						for (; i + skip < last; i += skip)
-							AddPointAverage(time, data, i, Mathf.Min(i + skip - 1, last), ref prevPoint);
+						for (int i = first; i + skip < last; i += skip)
+							AddPointAverage(time, data, i, skip, ref prevPoint);
 
 						// last point
-						AddPointAverage(time, data, i, Mathf.Min(last + skip, data.Count - 1), ref prevPoint);
+						if (last == data.LatestIndex)
+						{
+							AddPoint(time[data.LatestIndex].Value, data.LatestValue, ref prevPoint);
+						}
 
 					}
 					else
@@ -108,18 +114,13 @@ namespace GraphTool
 						// No Skip
 						for (int i = first; i <= last; ++i)
 						{
-							if (data[i] == null)
-							{
-								if (cutoffDatalessFrame) prevPoint = null;
-								continue;
-							}
-							AddPoint(time[i].Value, data[i].Value, ref prevPoint);
+							AddPoint(time[i].Value, data[i], ref prevPoint);
 						}
 					}
 
 					buffer.SetData(datas);
-					prevFirst = first;
-					prevLast = last;
+					prevFirst = handler.InScopeFirstIndex;
+					prevLast = handler.InScopeLastIndex;
 				}
 			}
 			else
@@ -132,6 +133,9 @@ namespace GraphTool
 			{
 				material.SetBuffer("Points", buffer);
 				material.SetInt("_PointsCount", ptsCount);
+				if (ptsCount == 0)
+					return;
+
 				material.SetFloat("_Scale", size);
 				material.SetColor("_Color", color);
 
@@ -153,30 +157,39 @@ namespace GraphTool
 
 		}
 
-		void AddPoint(float time, float data, ref Vector2? prevPoint)
+		bool AddPoint(float time, float? data, ref bool connectPrev)
 		{
-			var point = new Vector2(time, data);
-
-			datas[ptsCount] = new PointData()
+			if (data == null)
+			{
+				if (cutoffDatalessFrame) connectPrev = false;
+				return false;
+			}
+			var point = new Vector2(time, data.Value);
+			datas[ptsCount] = new PointData
 			{
 				pos = point,
-				drawLine = !cutoffDatalessFrame & drawLine
+				drawLine = connectPrev,
 			};
-
-			if(prevPoint != null)
-			{
-				datas[ptsCount - 1].drawLine = drawLine;
-			}
-			prevPoint = point;
 			ptsCount++;
+			connectPrev = true;
+			return true;
 		}
 
-		void AddPointAverage(Data.Reader time, Data.Reader data, int start, int end, ref Vector2? prevPoint)
+		int AddPointAverage(Data.Reader time, Data.Reader data,
+			int start, int dirAndCount, ref bool connectPrev)
 		{
+			var dir = System.Math.Sign(dirAndCount);
+			if (dir == 0) return 0;
+			var lim = start + dirAndCount;
+
 			float timeave = 0f;
 			float dataave = 0f;
 			int datacnt = 0;
-			for (int i = start; i <= end ; ++i)
+
+			start = Mathf.Clamp(start, 0, data.Count - 1);
+			lim = Mathf.Clamp(lim, -1, data.Count);
+
+			for (int i = start; dir > 0 ? i < lim : i > lim; i += dir)
 			{
 				if (data[i] == null) continue;
 				dataave += data[i].Value;
@@ -185,9 +198,14 @@ namespace GraphTool
 			}
 
 			if (datacnt != 0)
-				AddPoint(timeave / datacnt, dataave / datacnt, ref prevPoint);
-			else if (cutoffDatalessFrame)
-				prevPoint = null;
+			{
+				AddPoint(timeave / datacnt, dataave / datacnt, ref connectPrev);
+				return datacnt;
+			}
+			if (cutoffDatalessFrame)
+				connectPrev = false;
+
+			return 0;
 		}
 
 		protected override void OnEnable()

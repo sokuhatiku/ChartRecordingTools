@@ -82,8 +82,8 @@ Shader "GraphTool/Plotter"
 
 				uint id = floor(i.id / 3);
 				uint m =  max(0,_PointsCount-1);
-				o.pos0 = mul(_S2LMatrix, float4(Points[min(id , m)].pos, 0, 1));
-				o.pos1 = mul(_S2LMatrix, float4(Points[min(id+1, m)].pos, 0, 1));
+				o.pos0 = mul(_S2LMatrix, float4(Points[clamp(id-1, 0, _PointsCount-1)].pos, 0, 1));
+				o.pos1 = mul(_S2LMatrix, float4(Points[clamp(id, 0, _PointsCount-1)].pos, 0, 1));
 				o.drawLine = Points[id].drawLine;
 				return o;
 			}
