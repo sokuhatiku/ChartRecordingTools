@@ -133,8 +133,6 @@ namespace GraphTool
 			{
 				material.SetBuffer("Points", buffer);
 				material.SetInt("_PointsCount", ptsCount);
-				if (ptsCount == 0)
-					return;
 
 				material.SetFloat("_Scale", size);
 				material.SetColor("_Color", color);
@@ -236,7 +234,7 @@ namespace GraphTool
 				indices[i] = i;
 			}
 			dummyMesh.vertices = vertices;
-			dummyMesh.SetIndices(indices, MeshTopology.Lines, 0);
+			dummyMesh.SetIndices(indices, MeshTopology.Points, 0);
 
 			buffer = new ComputeBuffer(capasity, Marshal.SizeOf(typeof(PointData)));
 			datas = new PointData[capasity];

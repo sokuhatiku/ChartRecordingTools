@@ -1,49 +1,82 @@
 @startuml
 
-title GraphTool
+title UGUIChartRecorder
 
-class GraphHandler{
-  -datalist : List<data>
-
-  ..For Drawer..
-  +OnUpdateGraph : Action
-  +ScopeRect : Rect
-  +GridScale : Vector2
-  +GridSubdivisionX,Y : int
-  +GridAutoScalingThreshold : int
-  +IEnumerator<float> GetDataEnumerator(int)
-
-  ..For External Script..
-  +bool HasData(int)
-  +float? GetCurrentData(key)
-  +void SetData(int, float)
-  +void UpdateGraph()
-  +void Determine()
-  +void Clear()
-  +void ToggleRecording()
-
+namespace Provider{
+  TransformObserver -> Model.Recorder
+  Observer -> Model.Recorder
+  RandomValueGenerator -> Model.Recorder
 }
 
-class GraphPartsBase <<abstract>>
-class PlotterBase <<abstract>>
-class Plotter
-class Grid
-class Data{
-  +name : string
-  #data : List<float?>
-  #currentData : float?
-  +float? GetCurrent()
-  +void SetCurrent(float)
-  +void Determine()
-  +IEnumerator<value?> GetEnumerator()
-  +void Clear()
+namespace Model{
+
+  class Recorder #DDCCCC{
+    +OnUpdateData : Action
+    +Reader GetData(int key)
+    +Reader GetTimeline()
+    +void SetData(int key, float value)
+    +void Determine()
+    +int RegisterData(string dataname)
+  }
+  Recorder "1" o-- "1..*" Data
+
+  class Data{
+    -values : float?[]
+    +Data(string name)
+    +Reader GetReader()
+    +void SetCurrent(float value)
+    +void Determine()
+  }
+  Data - Reader
+
+  class Reader{
+    +Name : string
+    +Color : Color
+    +Count : int
+    +this[] : float?
+  }
+
+  class Scope{
+    +OnUpdateScope : Action
+    +ScopeRect : Rect
+    +Offset : Vector2
+    +Scale : Vector2
+
+    +firstIndex : int
+    +lastIndex : int
+
+    +GridScale : Vector2
+    +GridSubdivision : IntVector2
+  }
+  Scope "0..*" --o "1" Recorder
+
+  class Exporter{
+    +void Export(stirng path)
+    +void Export(stirng path,Scope scope, int[] keys)
+  }
+  Exporter -> Recorder
+  Exporter -u-> Scope
 }
 
-GraphPartsBase <|.. Grid
-GraphPartsBase <|.. PlotterBase
-PlotterBase <|.. Plotter
-GraphPartsBase .> GraphHandler
-PlotterBase ..> GraphHandler
-GraphHandler "1" o- "0..*" Data
+namespace View{
+  abstract class ViewBase{
+    #scope : Scope
+  }
+  ViewBase -> Model.Scope
 
+  Plotter ..|> ViewBase
+  Plotter -> Model.Recorder
+
+  Grid ..|> ViewBase
+  Label ..|> ViewBase
+}
+
+namespace Controller{
+  abstract class ControllerBase{
+    #Scope : Scope
+  }
+  ControllerBase -> Model.Scope
+  ScopeScroller ..|> ControllerBase
+  ScopeScaler ..|> ControllerBase
+}
 @enduml
