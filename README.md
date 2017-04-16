@@ -1,7 +1,9 @@
 # ChartRecordingTools
 This is a simply chart recording tool for uGUI. I with use for develop VR gesture.<br />
+**:exclamation:Caution:exclamation: v1.0.0 don't compatible to parent version. please delete old package before install.** 
 
 uGUI上で動作するシンプルなリアルタイムプロットツールです。VRにおけるジェスチャ開発のデバッグ用ツールとして作っています。
+[Release Page](https://github.com/sokuhatiku/ChartRecordingTools/releases "release page")
 
 ![スクリーンショット1](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot1.PNG)
 ![スクリーンショット2](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot2.PNG)
