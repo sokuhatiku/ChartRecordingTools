@@ -40,6 +40,8 @@ output_log.txt
 /[Aa]ssets/*
 !/[Aa]ssets/GraphTool.meta
 !/[Aa]ssets/GraphTool/
+!/[Aa]ssets/ChartRecordingTools.meta
+!/[Aa]ssets/ChartRecordingTools/
 /Screenshots/
 
 .vscode/

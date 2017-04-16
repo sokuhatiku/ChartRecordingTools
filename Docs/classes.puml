@@ -11,12 +11,19 @@ namespace Provider{
 namespace Model{
 
   class Recorder #DDCCCC{
+    -DataList : List<Data>
+    -Timeline : Data
     +OnUpdateData : Action
+    +DataKeyCount : int
+    +bool IsKeyValid(int key)
     +Reader GetData(int key)
     +Reader GetTimeline()
     +void SetData(int key, float value)
     +void Determine()
-    +int RegisterData(string dataname)
+    +void ClearAll()
+    -int RegisterData(string dataname)
+
+    +void ToggleDataAccept(bool toggle)
   }
   Recorder "1" o-- "1..*" Data
 
