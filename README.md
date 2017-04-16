@@ -3,8 +3,8 @@ This is a simply chart recording tool for uGUI. I with use for develop VR gestur
 
 uGUI上で動作するシンプルなリアルタイムプロットツールです。VRにおけるジェスチャ開発のデバッグ用ツールとして作っています。
 
-![スクリーンショット1](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot.gif)
-![スクリーンショット2](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot2.gif)
+![スクリーンショット1](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot1.PNG)
+![スクリーンショット2](https://github.com/sokuhatiku/GraphTool/blob/master/screenshot2.PNG)
 
 # TODO
 * ~~目盛りの作成~~
