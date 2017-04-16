@@ -31,7 +31,7 @@ namespace Sokuhatiku.ChartRecordingTools
 		{
 			var reader = new Dictionary<Type, TypeReader>();
 
-			CreateKeyLabelsDelegate floatCompatibleCreateKey =
+			CreateKeyLabelsDelegate singleValueCreateKey =
 				/* CreateKey */
 				() =>
 				{
@@ -52,30 +52,104 @@ namespace Sokuhatiku.ChartRecordingTools
 
 
 			reader.Add(typeof(float), new TypeReader(
-				floatCompatibleCreateKey,
-				floatCompatibleSendData));
-
-
-			reader.Add(typeof(int), new TypeReader(
-				floatCompatibleCreateKey,
-				floatCompatibleSendData));
-
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (float)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (float)prevValue;
+						if (num == preNum) return;
+					}
+					recorder.SetValue(keys[0].key, num);
+					prevValue = value;
+				}));
 
 			reader.Add(typeof(double), new TypeReader(
-				floatCompatibleCreateKey,
-				floatCompatibleSendData));
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (double)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (double)prevValue;
+						if (num == preNum) return;
+					}
+					recorder.SetValue(keys[0].key, (float)num);
+					prevValue = value;
+				}));
 
+			reader.Add(typeof(byte), new TypeReader(
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (byte)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (byte)prevValue;
+						if (num == preNum) return;
+					}
+					recorder.SetValue(keys[0].key, num);
+					prevValue = value;
+				}));
+
+			reader.Add(typeof(int), new TypeReader(
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (int)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (int)prevValue;
+						if (num == preNum) return;
+					}
+					recorder.SetValue(keys[0].key, num);
+					prevValue = value;
+				}));
+
+			reader.Add(typeof(long), new TypeReader(
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (long)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (long)prevValue;
+						if (num == preNum) return;
+					}
+					recorder.SetValue(keys[0].key, num);
+					prevValue = value;
+				}));
+
+			reader.Add(typeof(bool), new TypeReader(
+				singleValueCreateKey,
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var num = (bool)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preNum = (bool)prevValue;
+						if (num == preNum) return;
+					}
+				recorder.SetValue(keys[0].key, num ? 1 : 0);
+					prevValue = value;
+				}));
 
 			reader.Add(typeof(Vector2), new TypeReader(
 				/* CreateKey */
 				() =>
 				{
-					var labels = new string[]
+					return new string[]
 					{
 						"x",
 						"y",
 					};
-					return labels;
 				},
 				/*SendDataToRecorder*/
 				(Recorder recorder, object value, ref object prevValue,
@@ -87,8 +161,9 @@ namespace Sokuhatiku.ChartRecordingTools
 						var preVec2 = (Vector2)prevValue;
 						if (vec2 == preVec2) return;
 					}
-					recorder.SetValue(keys[0].key, vec2.x);
-					recorder.SetValue(keys[1].key, vec2.y);
+					int i = 0;
+					recorder.SetValue(keys[i++].key, vec2.x);
+					recorder.SetValue(keys[i++].key, vec2.y);
 					prevValue = value;
 				}));
 
@@ -97,13 +172,12 @@ namespace Sokuhatiku.ChartRecordingTools
 				/* CreateKey */
 				() =>
 				{
-					var labels = new string[]
+					return new string[]
 					{
 						"x",
 						"y",
 						"z",
 					};
-					return labels;
 				},
 				/*SendDataToRecorder*/
 				(Recorder recorder, object value, ref object prevValue,
@@ -115,29 +189,115 @@ namespace Sokuhatiku.ChartRecordingTools
 						var preVec3 = (Vector3)prevValue;
 						if (vec3 == preVec3) return;
 					}
-					recorder.SetValue(keys[0].key, vec3.x);
-					recorder.SetValue(keys[1].key, vec3.y);
-					recorder.SetValue(keys[2].key, vec3.z);
+					int i = 0;
+					recorder.SetValue(keys[i++].key, vec3.x);
+					recorder.SetValue(keys[i++].key, vec3.y);
+					recorder.SetValue(keys[i++].key, vec3.z);
 					prevValue = value;
 				}));
 
+			reader.Add(typeof(Vector4), new TypeReader(
+				/* CreateKey */
+				() =>
+				{
+					return new string[]
+					{
+						"w",
+						"x",
+						"y",
+						"z",
+					};
+				},
+				/*SendDataToRecorder*/
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var vec4 = (Vector4)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preVec4 = (Vector4)prevValue;
+						if (vec4 == preVec4) return;
+					}
+					int i = 0;
+					recorder.SetValue(keys[i++].key, vec4.w);
+					recorder.SetValue(keys[i++].key, vec4.x);
+					recorder.SetValue(keys[i++].key, vec4.y);
+					recorder.SetValue(keys[i++].key, vec4.z);
+
+					prevValue = value;
+				}));
+
+			reader.Add(typeof(Color), new TypeReader(
+				/* CreateKey */
+				() =>
+				{
+					return new string[]
+					{
+						"r",
+						"g",
+						"b",
+						"a",
+					};
+				},
+				/*SendDataToRecorder*/
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var color = (Color)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preColor = (Color)prevValue;
+						if (color == preColor) return;
+					}
+					int i = 0;
+					recorder.SetValue(keys[i++].key, color.r);
+					recorder.SetValue(keys[i++].key, color.g);
+					recorder.SetValue(keys[i++].key, color.b);
+					recorder.SetValue(keys[i++].key, color.a);
+					prevValue = value;
+				}));
+
+			reader.Add(typeof(Matrix4x4), new TypeReader(
+				/* CreateKey */
+				() =>
+				{
+					return new string[]
+					{
+						"m00","m01","m02","m03",
+						"m10","m11","m12","m13",
+						"m20","m21","m22","m23",
+						"m30","m31","m32","m33",
+					};
+				},
+				/*SendDataToRecorder*/
+				(Recorder recorder, object value, ref object prevValue,
+				UniversalObserver.KeyChain[] keys, bool distinctUntilChanged) =>
+				{
+					var matrix = (Matrix4x4)value;
+					if (distinctUntilChanged && prevValue != null)
+					{
+						var preMatrix = (Matrix4x4)prevValue;
+						if (matrix == preMatrix) return;
+					}
+					for (int i = 0; i < 16; i++) {
+						recorder.SetValue(keys[i].key, matrix[i]);
+					}
+
+
+					prevValue = value;
+				}));
 
 			reader.Add(typeof(Rect), new TypeReader(
 				/* CreateKey */
 				() =>
 				{
-					var labels = new string[] 
+					return new string[] 
 					{
-						"xMin",
-						"yMin",
-						"xCenter",
-						"yCenter",
-						"xMax",
-						"yMax",
-						"width",
-						"height",
+						"xMin", "yMin",
+						"xCenter", "yCenter",
+						"xMax", "yMax",
+						"width", "height",
 					};
-					return labels;
 				},
 				/*SendDataToRecorder*/
 				(Recorder recorder, object value, ref object prevValue,
@@ -149,14 +309,15 @@ namespace Sokuhatiku.ChartRecordingTools
 						var preRect = (Rect)prevValue;
 						if (rect == preRect) return;
 					}
-					recorder.SetValue(keys[0].key, rect.min.x);
-					recorder.SetValue(keys[1].key, rect.min.y);
-					recorder.SetValue(keys[2].key, rect.center.x);
-					recorder.SetValue(keys[3].key, rect.center.y);
-					recorder.SetValue(keys[4].key, rect.max.x);
-					recorder.SetValue(keys[5].key, rect.max.y);
-					recorder.SetValue(keys[6].key, rect.size.x);
-					recorder.SetValue(keys[7].key, rect.size.y);
+					int i = 0;
+					recorder.SetValue(keys[i++].key, rect.min.x);
+					recorder.SetValue(keys[i++].key, rect.min.y);
+					recorder.SetValue(keys[i++].key, rect.center.x);
+					recorder.SetValue(keys[i++].key, rect.center.y);
+					recorder.SetValue(keys[i++].key, rect.max.x);
+					recorder.SetValue(keys[i++].key, rect.max.y);
+					recorder.SetValue(keys[i++].key, rect.size.x);
+					recorder.SetValue(keys[i++].key, rect.size.y);
 
 					prevValue = value;
 				}));
@@ -178,12 +339,16 @@ namespace Sokuhatiku.ChartRecordingTools
 			return Readers.ContainsKey(type);
 		}
 
+		
+
 		delegate string[] CreateKeyLabelsDelegate();
 		CreateKeyLabelsDelegate OnCreateKeyLabels;
 		public string[] CreateKeyLabels()
 		{
 			return OnCreateKeyLabels();
 		}
+
+
 		delegate void SendDataToRecorderDelegate(Recorder recorder, object value, ref object prevValue, UniversalObserver.KeyChain[] keys, bool distinctUntilChanged);
 		SendDataToRecorderDelegate OnSendDataToRecorder;
 		public void SendDataToRecorder(Recorder recorder, object value, ref object prevValue, UniversalObserver.KeyChain[] keys, bool distinctUntilChanged)

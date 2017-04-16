@@ -85,16 +85,22 @@ namespace Sokuhatiku.ChartRecordingTools.EditorScript
 				{
 					var container = listProp.GetArrayElementAtIndex(index);
 
+					var enabled = container.FindPropertyRelative("enabled");
 					var target = container.FindPropertyRelative("target");
 					var propName = container.FindPropertyRelative("propertyName");
 					var keyChain = container.FindPropertyRelative("keys");
 					var memberType = container.FindPropertyRelative("memberType");
 					var ducTrigger = container.FindPropertyRelative("distinctUntilChanged");
-
+					
 					var mPos = new Rect(position);
 					mPos.height = EditorGUIUtility.singleLineHeight;
-
 					mPos.y += 5;
+
+					mPos.xMin = mPos.xMax - 20;
+					enabled.boolValue = EditorGUI.Toggle(mPos, enabled.boolValue);
+					EditorGUI.BeginDisabledGroup(!enabled.boolValue);
+
+					mPos.xMin = position.xMin;
 					var prevName = propName.stringValue;
 					var type = TargetSelectField(mPos, target, propName, memberType);
 					if (type == null)
@@ -134,6 +140,8 @@ namespace Sokuhatiku.ChartRecordingTools.EditorScript
 
 					mPos.y += mPos.height + 5;
 					EditorGUI.PropertyField(mPos, ducTrigger);
+
+					EditorGUI.EndDisabledGroup();
 				};
 			
 

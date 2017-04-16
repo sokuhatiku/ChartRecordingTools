@@ -499,32 +499,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 16
   axis: {x: 0, y: 1, z: 0}
---- !u!21 &232020667
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Plotter
-  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats:
-    - first:
-        name: _PointsCount
-      second: 0
-    - first:
-        name: _Scale
-      second: 1
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &263513527
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,7 +619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1062697883}
+  m_Material: {fileID: 350319663}
   m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -655,7 +629,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   scope: {fileID: 1622823462}
   dataKey: 2
-  size: 1
+  size: 2
   drawLine: 1
   cutoffDatalessFrame: 1
   drawsLimit: 1000
@@ -785,7 +759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bf1ec0deb80072418c88a11d254e725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 314969921}
+  m_Material: {fileID: 984175673}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -803,38 +777,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 313146680}
---- !u!21 &314969921
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Grid
-  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats: []
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 0.5882353}
-    - first:
-        name: _Division
-      second: {r: 10.5, g: 7, b: 42, a: 28}
-    - first:
-        name: _Offset
-      second: {r: -1, g: -0.5, b: 0, a: 0}
-    - first:
-        name: _Size
-      second: {r: 0.040152963, g: 0.036553524, b: 0.08030593, a: 0.07310705}
-    - first:
-        name: _SubColor
-      second: {r: 1, g: 1, b: 1, a: 0.19607843}
 --- !u!1 &325958790
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,6 +872,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!21 &350319663
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Plotter
+  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats:
+    - first:
+        name: _PointsCount
+      second: 0
+    - first:
+        name: _Scale
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &372782847
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,7 +1367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 232020667}
+  m_Material: {fileID: 1265336918}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1409,7 +1377,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   scope: {fileID: 1622823462}
   dataKey: 1
-  size: 1
+  size: 2
   drawLine: 1
   cutoffDatalessFrame: 1
   drawsLimit: 1000
@@ -2564,6 +2532,7 @@ MonoBehaviour:
       label: z
     memberType: 16
     distinctUntilChanged: 0
+    enabled: 1
 --- !u!4 &936049393
 Transform:
   m_ObjectHideFlags: 0
@@ -2577,7 +2546,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &1062697883
+--- !u!21 &959510821
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -2603,6 +2572,38 @@ Material:
     - first:
         name: _Color
       second: {r: 1, g: 1, b: 1, a: 1}
+--- !u!21 &984175673
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.5882353}
+    - first:
+        name: _Division
+      second: {r: 10.5, g: 7, b: 42, a: 28}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Size
+      second: {r: 0.040152963, g: 0.042296074, b: 0.08030593, a: 0.08459215}
+    - first:
+        name: _SubColor
+      second: {r: 1, g: 1, b: 1, a: 0.19607843}
 --- !u!1 &1142320403
 GameObject:
   m_ObjectHideFlags: 0
@@ -3108,7 +3109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1288541991}
+  m_Material: {fileID: 959510821}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -3118,7 +3119,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   scope: {fileID: 1622823462}
   dataKey: 0
-  size: 1
+  size: 2
   drawLine: 1
   cutoffDatalessFrame: 1
   drawsLimit: 1000
@@ -3128,6 +3129,32 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1224540313}
+--- !u!21 &1265336918
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Plotter
+  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats:
+    - first:
+        name: _PointsCount
+      second: 0
+    - first:
+        name: _Scale
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1266111174
 GameObject:
   m_ObjectHideFlags: 0
@@ -3347,32 +3374,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1284627476}
---- !u!21 &1288541991
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Plotter
-  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats:
-    - first:
-        name: _PointsCount
-      second: 0
-    - first:
-        name: _Scale
-      second: 1
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1314293134
 GameObject:
   m_ObjectHideFlags: 0

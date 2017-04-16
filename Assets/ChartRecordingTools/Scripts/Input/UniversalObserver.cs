@@ -24,6 +24,7 @@ namespace Sokuhatiku.ChartRecordingTools
 			public KeyChain[] keys;
 			public MemberTypes memberType;
 			public bool distinctUntilChanged = false;
+			public bool enabled = true;
 
 			[System.NonSerialized]
 			public TypeReader readerCache = null;
@@ -47,7 +48,7 @@ namespace Sokuhatiku.ChartRecordingTools
 		{
 			foreach(var c in targets)
 			{
-				if (c.target == null || c.propertyName == "")
+				if (!c.enabled || c.target == null || c.propertyName == "")
 					continue;
 				if(c.memberCache == null)
 				{
