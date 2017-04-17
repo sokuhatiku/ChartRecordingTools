@@ -160,14 +160,14 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 23787406}
---- !u!21 &100343372
+--- !u!21 &43687334
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Grid
-  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_Name: UI/ChartRecorder/Plotter
+  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -175,23 +175,17 @@ Material:
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs: []
-    m_Floats: []
+    m_Floats:
+    - first:
+        name: _PointsCount
+      second: 0
+    - first:
+        name: _Scale
+      second: 1
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 1, b: 1, a: 0.5882353}
-    - first:
-        name: _Division
-      second: {r: 10.5, g: 7, b: 42, a: 28}
-    - first:
-        name: _Offset
-      second: {r: -1, g: -0.5, b: 0, a: 0}
-    - first:
-        name: _Size
-      second: {r: 0.040152963, g: 0.042296074, b: 0.08030593, a: 0.08459215}
-    - first:
-        name: _SubColor
-      second: {r: 1, g: 1, b: 1, a: 0.19607843}
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &184559132
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1110295702}
+  m_Material: {fileID: 794211856}
   m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -791,7 +785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bf1ec0deb80072418c88a11d254e725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 100343372}
+  m_Material: {fileID: 1233960013}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1373,7 +1367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1110217418}
+  m_Material: {fileID: 43687334}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -2268,6 +2262,32 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
+--- !u!21 &794211856
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Plotter
+  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats:
+    - first:
+        name: _PointsCount
+      second: 0
+    - first:
+        name: _Scale
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &832024250
 GameObject:
   m_ObjectHideFlags: 0
@@ -2297,6 +2317,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!21 &882587098
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Plotter
+  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats:
+    - first:
+        name: _PointsCount
+      second: 0
+    - first:
+        name: _Scale
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &913258896
 GameObject:
   m_ObjectHideFlags: 0
@@ -2514,7 +2560,6 @@ MonoBehaviour:
   - name: X
   - name: Y
   - name: Z
-  - name: bool
 --- !u!114 &936049392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2527,7 +2572,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recorder: {fileID: 936049390}
-  targets: []
+  targets:
+  - target: {fileID: 913258897}
+    propertyName: position
+    keys:
+    - key: 0
+      label: x
+    - key: 1
+      label: y
+    - key: 2
+      label: z
+    memberType: 16
+    distinctUntilChanged: 0
+    enabled: 1
 --- !u!4 &936049393
 Transform:
   m_ObjectHideFlags: 0
@@ -2541,58 +2598,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &1110217418
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Plotter
-  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats:
-    - first:
-        name: _PointsCount
-      second: 0
-    - first:
-        name: _Scale
-      second: 1
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
---- !u!21 &1110295702
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Plotter
-  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats:
-    - first:
-        name: _PointsCount
-      second: 0
-    - first:
-        name: _Scale
-      second: 1
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1142320403
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,7 +3103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f75c3ee53cab445b7a858be107035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1808347623}
+  m_Material: {fileID: 882587098}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -3118,6 +3123,38 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1224540313}
+--- !u!21 &1233960013
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UI/ChartRecorder/Grid
+  m_Shader: {fileID: 4800000, guid: 09a1e0ed55d8c5e4f9507d0fe2db8fa0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs: []
+    m_Floats: []
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 0.5882353}
+    - first:
+        name: _Division
+      second: {r: 10.5, g: 7, b: 42, a: 28}
+    - first:
+        name: _Offset
+      second: {r: -1, g: -0.5, b: 0, a: 0}
+    - first:
+        name: _Size
+      second: {r: 0.040152963, g: 0.042296074, b: 0.08030593, a: 0.08459215}
+    - first:
+        name: _SubColor
+      second: {r: 1, g: 1, b: 1, a: 0.19607843}
 --- !u!1 &1266111174
 GameObject:
   m_ObjectHideFlags: 0
@@ -4380,32 +4417,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1769767923}
---- !u!21 &1808347623
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: UI/ChartRecorder/Plotter
-  m_Shader: {fileID: 4800000, guid: a4fa5619e0946dc46aa2ac6945efbd21, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs: []
-    m_Floats:
-    - first:
-        name: _PointsCount
-      second: 0
-    - first:
-        name: _Scale
-      second: 1
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1814941112
 GameObject:
   m_ObjectHideFlags: 0

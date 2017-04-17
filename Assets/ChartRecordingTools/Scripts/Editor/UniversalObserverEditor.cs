@@ -20,19 +20,75 @@ namespace Sokuhatiku.ChartRecordingTools.EditorScript
 	{
 		ReorderableList list;
 
+		Texture2D removeButton;
+
 		public override void OnInspectorGUI()
 		{
 			this.DrawEditorMaintenanceField();
 
 			serializedObject.Update();
 
+			if (removeButton == null)
+				removeButton = EditorGUIUtility.FindTexture("Toolbar Minus");
+
 			if (list == null)
 			{
 				list = CreateReorderableList(serializedObject.FindProperty("targets"));
 			}
 			list.DoLayoutList();
-
+			
+			DragAndDropField(list.serializedProperty);
+	
 			serializedObject.ApplyModifiedProperties();
+		}
+
+		void DragAndDropField(SerializedProperty list)
+		{
+			var objs = GetObservableObjects(DragAndDrop.objectReferences);
+
+			if (objs.Count() == 0) return;
+			var curRect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * 3);
+			EditorGUI.LabelField(curRect, "Drop and create New Observation target here.", GUI.skin.box);
+
+			var e = Event.current;
+			var type = e.type;
+
+			if (!curRect.Contains(e.mousePosition)) return;
+			switch (type)
+			{
+				case EventType.DragUpdated:
+					if (objs.Count() > 0) DragAndDrop.visualMode = DragAndDropVisualMode.Link;
+					else DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
+
+					e.Use();
+					break;
+
+				case EventType.DragPerform:
+					foreach(var obj in objs)
+					{
+						Component comp;
+						if (obj is GameObject)
+							comp = ((GameObject)obj).transform;
+						else comp = (Component)obj;
+
+						var i = list.arraySize;
+						list.arraySize = i + 1;
+						var element = list.GetArrayElementAtIndex(i);
+						element.FindPropertyRelative("target")
+							.objectReferenceValue = comp;
+						element.FindPropertyRelative("enabled")
+							.boolValue = true;
+					}
+
+					e.Use();
+
+					break;
+			}
+		}
+
+		System.Collections.Generic.IEnumerable<Object> GetObservableObjects(Object[] objs)
+		{
+			return objs.Where(r => (r is Component || r is GameObject));
 		}
 
 		ReorderableList CreateReorderableList(SerializedProperty listProp)
@@ -96,55 +152,58 @@ namespace Sokuhatiku.ChartRecordingTools.EditorScript
 					mPos.height = EditorGUIUtility.singleLineHeight;
 					mPos.y += 5;
 
-					mPos.xMin = mPos.xMax - 20;
-					enabled.boolValue = EditorGUI.Toggle(mPos, enabled.boolValue);
+					if (target.objectReferenceValue != null)
+					{
+						mPos.xMin = mPos.xMax - 20;
+						enabled.boolValue = EditorGUI.Toggle(mPos, enabled.boolValue);
+						mPos.xMin = position.xMin;
+					}
+					else enabled.boolValue = true;
 					EditorGUI.BeginDisabledGroup(!enabled.boolValue);
 
-					mPos.xMin = position.xMin;
 					var prevName = propName.stringValue;
 					var type = TargetSelectField(mPos, target, propName, memberType);
 					if (type == null)
 					{
 						keyChain.arraySize = 0;
-						return;
 					}
-					if(prevName != propName.stringValue)
+					else
 					{
-						var reader = TypeReader.Get(type);
-						if(reader != null)
+						if (prevName != propName.stringValue)
 						{
-							var labels = reader.CreateKeyLabels();
-							var prevLength = keyChain.arraySize;
-							keyChain.arraySize = labels.Length;
-							for(int i=0; i< keyChain.arraySize; i++)
+							var reader = TypeReader.Get(type);
+							if (reader != null)
 							{
-								var elem = keyChain.GetArrayElementAtIndex(i);
-								if (prevLength <= i)
-									elem.FindPropertyRelative("key").intValue = -1;
-								elem.FindPropertyRelative("label").stringValue = labels[i];
+								var labels = reader.CreateKeyLabels();
+								var prevLength = keyChain.arraySize;
+								keyChain.arraySize = labels.Length;
+								for (int i = 0; i < keyChain.arraySize; i++)
+								{
+									var elem = keyChain.GetArrayElementAtIndex(i);
+									if (prevLength <= i)
+										elem.FindPropertyRelative("key").intValue = -1;
+									elem.FindPropertyRelative("label").stringValue = labels[i];
+								}
 							}
 						}
+
+						var recorderObj = new SerializedObject(recorder);
+						for (int i = 0; i < keyChain.arraySize; i++)
+						{
+							var elem = keyChain.GetArrayElementAtIndex(i);
+							var label = elem.FindPropertyRelative("label");
+							var key = elem.FindPropertyRelative("key");
+
+							mPos.y += mPos.height;
+							key.intValue = GraphDataKeyAttributeDrawer.RecorderKeyField(
+									mPos, recorderObj, label.stringValue, key.intValue, false);
+						}
+
+						mPos.y += mPos.height + 5;
+						EditorGUI.PropertyField(mPos, ducTrigger);
 					}
-
-					var recorderObj = new SerializedObject(recorder);
-					for (int i = 0; i < keyChain.arraySize; i++)
-					{
-						var elem = keyChain.GetArrayElementAtIndex(i);
-						var label = elem.FindPropertyRelative("label");
-						var key = elem.FindPropertyRelative("key");
-
-						mPos.y += mPos.height;
-						key.intValue = GraphDataKeyAttributeDrawer.RecorderKeyField(
-								mPos, recorderObj, label.stringValue , key.intValue, false);
-					}
-
-					mPos.y += mPos.height + 5;
-					EditorGUI.PropertyField(mPos, ducTrigger);
-
 					EditorGUI.EndDisabledGroup();
 				};
-			
-
 			return list;
 		}
 

@@ -32,6 +32,11 @@ namespace Sokuhatiku.ChartRecordingTools
 			public MemberInfo memberCache = null;
 			[System.NonSerialized]
 			public object prevValue = null;
+
+			public ObserverTargetData()
+			{
+				enabled = true;
+			}
 		}
 
 		[System.Serializable]
