@@ -45,16 +45,14 @@ namespace Sokuhatiku.ChartRecordingTools.EditorScript
 		void DragAndDropField(SerializedProperty list)
 		{
 			var objs = GetObservableObjects(DragAndDrop.objectReferences);
-
+			
 			if (objs.Count() == 0) return;
 			var curRect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * 3);
 			EditorGUI.LabelField(curRect, "Drop and create New Observation target here.", GUI.skin.box);
 
 			var e = Event.current;
-			var type = e.type;
-
 			if (!curRect.Contains(e.mousePosition)) return;
-			switch (type)
+			switch (e.type)
 			{
 				case EventType.DragUpdated:
 					if (objs.Count() > 0) DragAndDrop.visualMode = DragAndDropVisualMode.Link;
